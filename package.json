@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "dev:server": "ts-node-dev --respawn --transpile-only ./src/index.ts",
-    "test": "jest --watchAll --silent"
+    "test": "jest --watch --colors --noStackTrace"
   },
   "devDependencies": {
     "@types/express": "^4.17.14",
@@ -16,6 +19,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
     "jest": "^29.2.1",
+    "ts-jest": "^29.0.3",
     "ts-node-dev": "^2.0.0",
     "typescript": "^4.8.4"
   },
@@ -23,7 +27,6 @@
     "@types/cors": "^2.8.12",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "passport": "^0.6.0",
-    "passport-google-oauth": "^2.0.0"
+    "passport": "^0.6.0"
   }
 }
