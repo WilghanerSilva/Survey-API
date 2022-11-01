@@ -14,12 +14,13 @@ class UserController {
 
   async auth(httpRequest: HttpRequest) {
     const {email, password} = httpRequest.body;
-
     if(!email){return HttpResponse.badRequest('email');}
     if(!password){return HttpResponse.badRequest('password');}
     if(!this.EmailValidator.validateEmail){return HttpResponse.serverError()}
 
-    this.EmailValidator.validateEmail(email);
+    const isValid = this.EmailValidator.validateEmail(email);
+
+    if(!isValid){return HttpResponse.unauthorized()};
   }
 }
 
@@ -93,6 +94,21 @@ describe('User Controller', () => {
     sut.auth(httpRequest);
 
     expect(emailValidatorSpy.email).toBe(httpRequest.body.email);
+  })
+
+  test('should return 401 if validate method of EmailValidator returns false', async () => {
+    const {sut, emailValidatorSpy} = makeSut();
+    const httpRequest = {
+      body: {
+        email: 'invalid_email',
+        password: 'any_password'
+      }
+    }
+
+    emailValidatorSpy.response = false;
+    const response = await sut.auth(httpRequest);
+
+    expect(response?.statusCode).toBe(401);
   })
   
 });

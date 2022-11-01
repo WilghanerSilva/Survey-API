@@ -14,4 +14,11 @@ export default class HttpResponse{
       body: ''
     }
   }
+
+  static unauthorized(){
+    return {
+      statusCode: 401,
+      body: 'Email or password incorrect'
+    }
+  }
 }
