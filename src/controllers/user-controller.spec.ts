@@ -17,8 +17,9 @@ class UserController {
 
     if(!email){return HttpResponse.badRequest('email');}
     if(!password){return HttpResponse.badRequest('password');}
-      
     if(!this.EmailValidator.validateEmail){return HttpResponse.serverError()}
+
+    this.EmailValidator.validateEmail(email);
   }
 }
 
@@ -79,5 +80,19 @@ describe('User Controller', () => {
 
     expect(result?.statusCode).toBe(500);
   });
+
+  test('should correct email is sent to EmailValidator', async () => {
+    const {sut, emailValidatorSpy} = makeSut();
+    const httpRequest = {
+      body: {
+        email: 'any_email@mail.com',
+        password: 'any_password'
+      }
+    };
+
+    sut.auth(httpRequest);
+
+    expect(emailValidatorSpy.email).toBe(httpRequest.body.email);
+  })
   
 });
