@@ -7,4 +7,11 @@ export default class HttpResponse{
       body: new MissingParamError(paramName)
     }
   }
+
+  static serverError(){
+    return {
+      statusCode: 500,
+      body: ''
+    }
+  }
 }
