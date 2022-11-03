@@ -14,17 +14,23 @@ class EmailValidatorSpy implements iEmailValidator{
 }
 
 class AuthServiceSpy implements iAuthService{
+  public token = 'any_token';
+  public email = '';
+  public password = '';
+
   async authenticate(email: string, password: string){
-    return {token: 'any_token'}
+    this.email = email;
+    this.password = password;
+    return this.token
   }
 }
 
 const makeSut = () => {
   const emailValidatorSpy = new EmailValidatorSpy();
-  const authService = new AuthServiceSpy();
-  const sut = new UserController(emailValidatorSpy, authService);
+  const authServiceSpy = new AuthServiceSpy();
+  const sut = new UserController(emailValidatorSpy, authServiceSpy);
 
-  return {sut, emailValidatorSpy, authService};
+  return {sut, emailValidatorSpy, authServiceSpy};
 }
 
 
@@ -109,6 +115,52 @@ describe('User Controller', () => {
     }
     const httpResponse = await sut.auth(httpRequest);
     expect(httpResponse?.statusCode).toBe(500);
+  })
+
+  test('should send correct email and password to AuthService', async () => {
+    const {sut, authServiceSpy} = makeSut();
+    const httpRequest = {
+      body: {
+        email: 'any_email@mail.com',
+        password: 'any_password',
+      }
+    }
+    
+    await sut.auth(httpRequest);
+    
+    expect(authServiceSpy.email).toBe(httpRequest.body.email);
+    expect(authServiceSpy.password).toBe(httpRequest.body.password)
+  })
+
+  test('should return 401 if undefid token has sent by AuthService', async () => {
+    const {sut, authServiceSpy} = makeSut();
+    const httpRequest = {
+      body: {
+        email: 'any_email@mail.com',
+        password: 'invalid_password'
+      }
+    }
+
+    authServiceSpy.token = '';
+
+    const httpResponse = await sut.auth(httpRequest);
+
+    expect(httpResponse?.statusCode).toBe(401);
+  })
+
+  test('shoul return 200 and token if an invalid AuthService is sent', async () => {
+    const {sut, authServiceSpy} = makeSut();
+    const httpRequest = {
+      body: {
+        email: 'any_email@mail.com',
+        password: 'any_password'
+      }
+    };
+
+    const httpResponse = await sut.auth(httpRequest);
+
+    expect(httpResponse?.statusCode).toBe(200);
+    expect(httpResponse.body).toEqual({token: authServiceSpy.token});
   })
   
 });

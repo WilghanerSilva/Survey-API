@@ -1,5 +1,5 @@
 interface iAuthService{
-  authenticate(email: string, password: string): Promise<object|undefined>;
+  authenticate(email: string, password: string): Promise<String | undefined>;
 }
 
 export default iAuthService;

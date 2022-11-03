@@ -15,10 +15,20 @@ class UserController {
     if(!password){return HttpResponse.badRequest('password');}
     if(!this.emailValidator.validateEmail){return HttpResponse.serverError()}
     if(!this.authService.authenticate){return HttpResponse.serverError()}
-
-    const isValid = this.emailValidator.validateEmail(email);
-
-    if(!isValid){return HttpResponse.unauthorized()};
+    
+    try {
+      const isValid = this.emailValidator.validateEmail(email);
+  
+      if(!isValid){return HttpResponse.unauthorized()};
+  
+      const token = await this.authService.authenticate(email, password);
+      if(!token){return HttpResponse.unauthorized()};
+  
+      return HttpResponse.ok({token});
+      
+    } catch (error) {
+      return HttpResponse.serverError();  
+    }
   }
 }
 

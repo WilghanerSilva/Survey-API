@@ -21,4 +21,11 @@ export default class HttpResponse{
       body: 'Email or password incorrect'
     }
   }
+
+  static ok(body: object){
+    return {
+      statusCode: 200,
+      body: body
+    }
+  }
 }
