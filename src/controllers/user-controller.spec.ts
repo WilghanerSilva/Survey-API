@@ -162,5 +162,26 @@ describe('User Controller', () => {
     expect(httpResponse?.statusCode).toBe(200);
     expect(httpResponse.body).toEqual({token: authServiceSpy.token});
   })
+
+  test('should return 500 if some dependency throw an error', async () => {
+    const emailValidatorSpy = new EmailValidatorSpy();
+    const authServiceSpy = {
+      authenticate: () =>{
+        throw new Error();
+      }
+    } as iAuthService;
+    const sut = new UserController(emailValidatorSpy, authServiceSpy);
+
+    const httpRequest = {
+      body:{
+        email: 'any_email@mail.com',
+        password: 'any_password'
+      }
+    }
+
+    const httpResponse = await sut.auth(httpRequest);
+    expect(httpResponse.statusCode).toBe(500); 
+    
+  })
   
 });
