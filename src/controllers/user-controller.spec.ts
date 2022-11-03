@@ -163,7 +163,7 @@ describe('User Controller', () => {
     expect(httpResponse.body).toEqual({token: authServiceSpy.token});
   })
 
-  test('should return 500 if some dependency throw an error', async () => {
+  test('should return 500 if any dependency throw an error', async () => {
     const emailValidatorSpy = new EmailValidatorSpy();
     const authServiceSpy = {
       authenticate: () =>{
