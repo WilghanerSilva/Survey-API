@@ -1,4 +1,4 @@
-import UserController from './user-controller';
+import UserController from './auth-controller';
 import MissingParamError from '../utils/errors/MissingParam';
 import iEmailValidator from '../interfaces/email-validator';
 import iAuthService from '../interfaces/auth-service';
