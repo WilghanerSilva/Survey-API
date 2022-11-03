@@ -9,16 +9,21 @@ interface iEmailValidator{
   validateEmail(email: string): boolean
 }
 
+interface iAuthService{
+  authenticate(email: string, password: string): Promise<object|undefined>;
+}
+
 class UserController {
-  constructor(private EmailValidator: iEmailValidator){}
+  constructor(private emailValidator: iEmailValidator, private authService: iAuthService){}
 
   async auth(httpRequest: HttpRequest) {
     const {email, password} = httpRequest.body;
     if(!email){return HttpResponse.badRequest('email');}
     if(!password){return HttpResponse.badRequest('password');}
-    if(!this.EmailValidator.validateEmail){return HttpResponse.serverError()}
+    if(!this.emailValidator.validateEmail){return HttpResponse.serverError()}
+    if(!this.authService.authenticate){return HttpResponse.serverError()}
 
-    const isValid = this.EmailValidator.validateEmail(email);
+    const isValid = this.emailValidator.validateEmail(email);
 
     if(!isValid){return HttpResponse.unauthorized()};
   }
@@ -34,11 +39,18 @@ class EmailValidatorSpy implements iEmailValidator{
   }
 }
 
+class AuthServiceSpy implements iAuthService{
+  async authenticate(email: string, password: string){
+    return {token: 'any_token'}
+  }
+}
+
 const makeSut = () => {
   const emailValidatorSpy = new EmailValidatorSpy();
-  const sut = new UserController(emailValidatorSpy);
+  const authService = new AuthServiceSpy();
+  const sut = new UserController(emailValidatorSpy, authService);
 
-  return {sut, emailValidatorSpy};
+  return {sut, emailValidatorSpy, authService};
 }
 
 
@@ -70,7 +82,8 @@ describe('User Controller', () => {
   });
 
   test('should return 500 if an invalid EmailValidator is sent', async () => {
-    const sut = new UserController({} as iEmailValidator);
+    const authServiceSpy = new AuthServiceSpy();
+    const sut = new UserController({} as iEmailValidator, authServiceSpy);
     const httpRequest = {
       body: {
         email: 'any_email@mail.com',
@@ -109,6 +122,19 @@ describe('User Controller', () => {
     const response = await sut.auth(httpRequest);
 
     expect(response?.statusCode).toBe(401);
+  })
+
+  test('should return 500 if an invalid AuthService is sent', async () => {
+    const emailValidatorSpy = new EmailValidatorSpy()
+    const sut = new UserController(emailValidatorSpy, {} as iAuthService);
+    const httpRequest = {
+      body: {
+        email: 'any_email@mail.com',
+        password: 'any_password'
+      }
+    }
+    const httpResponse = await sut.auth(httpRequest);
+    expect(httpResponse?.statusCode).toBe(500);
   })
   
 });
