@@ -1,33 +1,7 @@
-import HttpResponse from '../utils/HttpResponse';
+import UserController from './user-controller';
 import MissingParamError from '../utils/errors/MissingParam';
-
-type HttpRequest = {
-  body: any
-}
-
-interface iEmailValidator{
-  validateEmail(email: string): boolean
-}
-
-interface iAuthService{
-  authenticate(email: string, password: string): Promise<object|undefined>;
-}
-
-class UserController {
-  constructor(private emailValidator: iEmailValidator, private authService: iAuthService){}
-
-  async auth(httpRequest: HttpRequest) {
-    const {email, password} = httpRequest.body;
-    if(!email){return HttpResponse.badRequest('email');}
-    if(!password){return HttpResponse.badRequest('password');}
-    if(!this.emailValidator.validateEmail){return HttpResponse.serverError()}
-    if(!this.authService.authenticate){return HttpResponse.serverError()}
-
-    const isValid = this.emailValidator.validateEmail(email);
-
-    if(!isValid){return HttpResponse.unauthorized()};
-  }
-}
+import iEmailValidator from '../interfaces/email-validator';
+import iAuthService from '../interfaces/auth-service';
 
 class EmailValidatorSpy implements iEmailValidator{
   public email = "";
