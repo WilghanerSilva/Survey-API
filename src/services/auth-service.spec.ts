@@ -12,10 +12,14 @@ interface iLoadUserByRepository {
   load(email: string) : Promise<User | undefined>; 
 }
 
+interface iEncrypter {
+  compare(password: string, hashedPassword: string): Boolean;
+}
 
 class AuthService implements iAuthService {
   constructor(
     private loadUserByRepository: iLoadUserByRepository,
+    private encrypter: iEncrypter,
   ){}
 
   async authenticate(email: string, password: string): Promise<String | null> {
@@ -28,6 +32,8 @@ class AuthService implements iAuthService {
     const user = await this.loadUserByRepository.load(email);
 
     if(!user){return null}
+
+    this.encrypter.compare(password, user.password);
     
     return 'any_token';
   }
@@ -38,7 +44,7 @@ const makeLoadUserByRepository = () => {
     public user: User | undefined = {
       name: 'any_name',
       email: 'any_email@mail.com',
-      password: 'any_password'
+      password: 'hashed_password'
     }
   
     public email = "";
@@ -52,14 +58,32 @@ const makeLoadUserByRepository = () => {
   return new LoadUserByRepositorySpy();
 }
 
+const makeEncrypter = () => {
+  class EncrypterSpy implements iEncrypter {
+    public password = "";
+    public hashedPassword = "";
+    public isValid = true;
 
+    compare(password: string, hashedPassword: string){
+      
+      this.password = password;
+      this.hashedPassword = hashedPassword;
+      
+      return this.isValid;
+    }
+  }
+
+  return new EncrypterSpy();
+}
 
 const makeSut = () => {
   const loadUserByEmailRepositorySpy = makeLoadUserByRepository();
-  const sut = new AuthService(loadUserByEmailRepositorySpy);
+  const encrypterSpy = makeEncrypter();
+  const sut = new AuthService(loadUserByEmailRepositorySpy, encrypterSpy);
 
   return {
     loadUserByEmailRepositorySpy,
+    encrypterSpy,
     sut
   }
 }
@@ -94,6 +118,14 @@ describe("Auth Service", ()=>{
     expect(acessToken).toBeNull();
   })
 
+  test('shoul call Encrypter with correct values', async () => {
+    const {sut, encrypterSpy, loadUserByEmailRepositorySpy} = makeSut();
+    const password = 'any_password';
 
+    await sut.authenticate('any_email', 'any_password');
+
+    expect(encrypterSpy.password).toEqual(password);
+    expect(encrypterSpy.hashedPassword).toEqual(loadUserByEmailRepositorySpy.user?.password);
+  })
   
 })
