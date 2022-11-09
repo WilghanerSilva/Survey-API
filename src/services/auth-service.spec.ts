@@ -3,10 +3,12 @@ import AuthService from './auth-service';
 import iEncrypter from '../interfaces/encrypter';
 import iLoadUserByEmailRepository from '../interfaces/load-user-by-email-repository';
 import User from '../types/user-type';
+import iTokenManager from '../interfaces/token-manager';
 
 const makeLoadUserByRepository = () => {
   class LoadUserByRepositorySpy implements iLoadUserByEmailRepository{
     public user: User | undefined = {
+      id: 'any_id',
       name: 'any_name',
       email: 'any_email@mail.com',
       password: 'hashed_password'
@@ -21,6 +23,20 @@ const makeLoadUserByRepository = () => {
   }
 
   return new LoadUserByRepositorySpy();
+}
+
+const makeTokenManagerSpy = () => {
+  class TokenManagerSpy implements iTokenManager{
+    public userId = '';
+    public token = 'token';
+    
+    generate(userId: string): string {
+      this.userId = userId;
+      return this.token;
+    }
+  }
+
+  return new TokenManagerSpy();
 }
 
 const makeEncrypter = () => {
@@ -44,9 +60,12 @@ const makeEncrypter = () => {
 const makeSut = () => {
   const loadUserByEmailRepositorySpy = makeLoadUserByRepository();
   const encrypterSpy = makeEncrypter();
-  const sut = new AuthService(loadUserByEmailRepositorySpy, encrypterSpy);
+  const tokenManagerSpy = makeTokenManagerSpy();
+
+  const sut = new AuthService(loadUserByEmailRepositorySpy, encrypterSpy, tokenManagerSpy);
 
   return {
+    tokenManagerSpy,
     loadUserByEmailRepositorySpy,
     encrypterSpy,
     sut
@@ -99,6 +118,14 @@ describe('Auth Service', ()=>{
 
     const acessToken = await sut.authenticate("any_email@mail.com", "any_password");
     expect(acessToken).toBeNull();
+  })
+
+  test('should call tokenManager to generate token with correct values', async () => {
+    const {sut, tokenManagerSpy, loadUserByEmailRepositorySpy} = makeSut();
+    
+    await sut.authenticate("any_email@mail.com", "any_password");
+    
+    expect(tokenManagerSpy.userId).toEqual(loadUserByEmailRepositorySpy.user?.id);
   })
   
 })

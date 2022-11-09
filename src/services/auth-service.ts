@@ -2,12 +2,13 @@ import iEncrypter from "../interfaces/encrypter";
 import iLoadUserByEmailRepository from "../interfaces/load-user-by-email-repository";
 import iAuthService from "../interfaces/auth-service";
 import MissingParamError from "../utils/errors/MissingParam";
-
+import iTokenManager from "../interfaces/token-manager";
 
 class AuthService implements iAuthService {
   constructor(
     private loadUserByRepository: iLoadUserByEmailRepository,
     private encrypter: iEncrypter,
+    private tokenManager: iTokenManager
   ){}
 
   async authenticate(email: string, password: string): Promise<String | null> {
@@ -22,7 +23,8 @@ class AuthService implements iAuthService {
     if(!user){return null}
     if(!this.encrypter.compare(password, user.password)){return null}
     
-    
+    this.tokenManager.generate(user.id);
+
     return 'any_token';
   }
 }
