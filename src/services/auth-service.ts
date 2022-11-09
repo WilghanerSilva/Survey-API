@@ -20,8 +20,8 @@ class AuthService implements iAuthService {
     const user = await this.loadUserByRepository.load(email);
 
     if(!user){return null}
-
-    this.encrypter.compare(password, user.password);
+    if(!this.encrypter.compare(password, user.password)){return null}
+    
     
     return 'any_token';
   }

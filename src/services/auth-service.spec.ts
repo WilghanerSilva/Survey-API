@@ -92,5 +92,13 @@ describe('Auth Service', ()=>{
     expect(encrypterSpy.password).toEqual(password);
     expect(encrypterSpy.hashedPassword).toEqual(loadUserByEmailRepositorySpy.user?.password);
   })
+
+  test('should return null if an invalid password is provided', async () => {
+    const {sut, encrypterSpy} = makeSut();
+    encrypterSpy.isValid = false;
+
+    const acessToken = await sut.authenticate("any_email@mail.com", "any_password");
+    expect(acessToken).toBeNull();
+  })
   
 })
