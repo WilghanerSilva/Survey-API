@@ -1,46 +1,11 @@
 import MissingParamError from '../utils/errors/MissingParam';
-import iAuthService from '../interfaces/auth-service';
-import e from 'express';
-
-type User = {
-  name: string,
-  email: string,
-  password: string,
-}
-
-interface iLoadUserByRepository {
-  load(email: string) : Promise<User | undefined>; 
-}
-
-interface iEncrypter {
-  compare(password: string, hashedPassword: string): Boolean;
-}
-
-class AuthService implements iAuthService {
-  constructor(
-    private loadUserByRepository: iLoadUserByRepository,
-    private encrypter: iEncrypter,
-  ){}
-
-  async authenticate(email: string, password: string): Promise<String | null> {
-    if(!email)
-      throw new MissingParamError('email');
-    
-    if(!password)
-      throw new MissingParamError('password')
-
-    const user = await this.loadUserByRepository.load(email);
-
-    if(!user){return null}
-
-    this.encrypter.compare(password, user.password);
-    
-    return 'any_token';
-  }
-}
+import AuthService from './auth-service';
+import iEncrypter from '../interfaces/encrypter';
+import iLoadUserByEmailRepository from '../interfaces/load-user-by-email-repository';
+import User from '../types/user-type';
 
 const makeLoadUserByRepository = () => {
-  class LoadUserByRepositorySpy implements iLoadUserByRepository{
+  class LoadUserByRepositorySpy implements iLoadUserByEmailRepository{
     public user: User | undefined = {
       name: 'any_name',
       email: 'any_email@mail.com',
