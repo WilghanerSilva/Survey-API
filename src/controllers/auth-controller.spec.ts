@@ -4,7 +4,7 @@ import iEmailValidator from '../interfaces/email-validator';
 import iAuthService from '../interfaces/auth-service';
 
 class EmailValidatorSpy implements iEmailValidator{
-  public email = "";
+  public email = '';
   public response = true;
 
   validateEmail(email: string):boolean {
@@ -44,7 +44,7 @@ describe('User Controller', () => {
     }
     const result = await sut.auth(httpRequest);
 
-    expect(result?.statusCode).toBe(400);
+    expect(result?.statusCode).toEqual(400);
     expect(result?.body).toEqual(new MissingParamError('email'));
   });
 
@@ -57,7 +57,7 @@ describe('User Controller', () => {
     }
     const result = await sut.auth(httpRequest);
 
-    expect(result?.statusCode).toBe(400);
+    expect(result?.statusCode).toEqual(400);
     expect(result?.body).toEqual(new MissingParamError('password'));
   });
 
@@ -72,7 +72,7 @@ describe('User Controller', () => {
     }
     const result = await sut.auth(httpRequest);
 
-    expect(result?.statusCode).toBe(500);
+    expect(result?.statusCode).toEqual(500);
   });
 
   test('should correct email is sent to EmailValidator', async () => {
@@ -86,7 +86,7 @@ describe('User Controller', () => {
 
     sut.auth(httpRequest);
 
-    expect(emailValidatorSpy.email).toBe(httpRequest.body.email);
+    expect(emailValidatorSpy.email).toEqual(httpRequest.body.email);
   })
 
   test('should return 401 if validate method of EmailValidator returns false', async () => {
@@ -101,7 +101,7 @@ describe('User Controller', () => {
     emailValidatorSpy.response = false;
     const response = await sut.auth(httpRequest);
 
-    expect(response?.statusCode).toBe(401);
+    expect(response?.statusCode).toEqual(401);
   })
 
   test('should return 500 if an invalid AuthService is sent', async () => {
@@ -114,7 +114,7 @@ describe('User Controller', () => {
       }
     }
     const httpResponse = await sut.auth(httpRequest);
-    expect(httpResponse?.statusCode).toBe(500);
+    expect(httpResponse?.statusCode).toEqual(500);
   })
 
   test('should send correct email and password to AuthService', async () => {
@@ -128,8 +128,8 @@ describe('User Controller', () => {
     
     await sut.auth(httpRequest);
     
-    expect(authServiceSpy.email).toBe(httpRequest.body.email);
-    expect(authServiceSpy.password).toBe(httpRequest.body.password)
+    expect(authServiceSpy.email).toEqual(httpRequest.body.email);
+    expect(authServiceSpy.password).toEqual(httpRequest.body.password)
   })
 
   test('should return 401 if undefid token has sent by AuthService', async () => {
@@ -145,7 +145,7 @@ describe('User Controller', () => {
 
     const httpResponse = await sut.auth(httpRequest);
 
-    expect(httpResponse?.statusCode).toBe(401);
+    expect(httpResponse?.statusCode).toEqual(401);
   })
 
   test('shoul return 200 and token if an invalid AuthService is sent', async () => {
@@ -159,7 +159,7 @@ describe('User Controller', () => {
 
     const httpResponse = await sut.auth(httpRequest);
 
-    expect(httpResponse?.statusCode).toBe(200);
+    expect(httpResponse?.statusCode).toEqual(200);
     expect(httpResponse.body).toEqual({token: authServiceSpy.token});
   })
 
@@ -180,7 +180,7 @@ describe('User Controller', () => {
     }
 
     const httpResponse = await sut.auth(httpRequest);
-    expect(httpResponse.statusCode).toBe(500); 
+    expect(httpResponse.statusCode).toEqual(500); 
     
   })
   

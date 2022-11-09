@@ -88,17 +88,17 @@ const makeSut = () => {
   }
 }
 
-describe("Auth Service", ()=>{
+describe('Auth Service', ()=>{
   test('should throw if an empty email was sent', async () => {
     const {sut} = makeSut();
     
-    expect(sut.authenticate('','any_password')).rejects.toThrow(new MissingParamError("email"));
+    expect(sut.authenticate('','any_password')).rejects.toThrow(new MissingParamError('email'));
   })
 
   test('should throw if an empty password was sent', async () => {
     const {sut} = makeSut();
     
-    expect(sut.authenticate('any_email@mail.com','')).rejects.toThrow(new MissingParamError("password"));
+    expect(sut.authenticate('any_email@mail.com','')).rejects.toThrow(new MissingParamError('password'));
   })
 
   test('should call LoadUserByEmailRepository with correct email', async () => {
@@ -107,7 +107,7 @@ describe("Auth Service", ()=>{
     
     sut.authenticate(email, 'any_password');
 
-    expect(loadUserByEmailRepositorySpy.email).toBe(email);
+    expect(loadUserByEmailRepositorySpy.email).toEqual(email);
   })
 
   test('should return null if an invalid email is providade', async () => {
@@ -118,7 +118,7 @@ describe("Auth Service", ()=>{
     expect(acessToken).toBeNull();
   })
 
-  test('shoul call Encrypter with correct values', async () => {
+  test('should call Encrypter with correct values', async () => {
     const {sut, encrypterSpy, loadUserByEmailRepositorySpy} = makeSut();
     const password = 'any_password';
 
