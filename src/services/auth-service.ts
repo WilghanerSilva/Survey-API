@@ -23,9 +23,9 @@ class AuthService implements iAuthService {
     if(!user){return null}
     if(!this.encrypter.compare(password, user.password)){return null}
     
-    this.tokenManager.generate(user.id);
+    const acessToken = this.tokenManager.generate(user.id);
 
-    return 'any_token';
+    return acessToken;
   }
 }
 

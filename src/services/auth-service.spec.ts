@@ -127,5 +127,13 @@ describe('Auth Service', ()=>{
     
     expect(tokenManagerSpy.userId).toEqual(loadUserByEmailRepositorySpy.user?.id);
   })
+
+  test('should return the acessToken if correct credentials are provided', async () => {
+    const {sut, tokenManagerSpy} = makeSut();
+
+    const acessToken = await sut.authenticate('valid_email@mail.com', 'valid_password');
+
+    expect(acessToken).toEqual(tokenManagerSpy.token);
+  })
   
 })
