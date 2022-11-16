@@ -1,11 +1,14 @@
 import iEmailValidator from '../../interfaces/email-validator';
 import validator from 'validator';
+import MissingParamError from '../errors/MissingParam';
 
 jest.mock('validator');
 
 class EmailValidator implements iEmailValidator{
   
   validateEmail(email: string): boolean {
+    if(!email){throw new MissingParamError('email')}
+  
     return validator.isEmail("any_email@mail.com");
   }
 }
@@ -38,7 +41,7 @@ describe('Email Validator', () => {
   test('should call validator with correct email', async () => {
     const {sut} = makeSut()
     let calledEmail
-    
+
     mockedValidator.isEmail.mockImplementation((email: string)=>{
       calledEmail = email;
       return true;
@@ -47,6 +50,11 @@ describe('Email Validator', () => {
     sut.validateEmail(email);
 
     expect(calledEmail).toBe(email);
+  })
+
+  test('should trhow if no email is provided', () => {
+    const {sut} = makeSut();
+    expect(()=>{sut.validateEmail('')}).toThrow(new MissingParamError('email'));
   })
 
 });
