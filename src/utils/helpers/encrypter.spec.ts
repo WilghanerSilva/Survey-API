@@ -1,16 +1,9 @@
 import MissingParamError from '../errors/MissingParam';
-import iEncrypter from '../../interfaces/encrypter';
-import bcrypt, { hash } from 'bcrypt';
+import bcrypt from 'bcrypt';
+import Encrypter from './encrypter';
 
 jest.mock('bcrypt');
 
-class Encrypter implements iEncrypter{
-  async compare(password: string, hashedPassword: string): Promise<Boolean> {
-    if(!password){throw new MissingParamError('password')};
-    if(!hashedPassword){throw new MissingParamError('hashedPassword')};
-    return await bcrypt.compare(password, hashedPassword);
-  }
-}
 
 const makeSut = () => {
   return new Encrypter();
