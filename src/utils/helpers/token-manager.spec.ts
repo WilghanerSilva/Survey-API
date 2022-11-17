@@ -1,24 +1,8 @@
 import MissingParamError from '../errors/MissingParam';
-import iTokenManager from '../../interfaces/token-manager';
 import jwt from 'jsonwebtoken';
-import * as fs from 'fs';
-
-const privateKey = fs.readFileSync('src/keys/private.key', 'utf8');
+import TokenManager from './token-manager';
 
 jest.mock('jsonwebtoken');
-
-
-class TokenManager implements iTokenManager{
-  generate(userId: string): string {
-    if(!userId){throw new MissingParamError('userId')}
-    const token = jwt.sign(userId, privateKey, {
-      expiresIn: 1800,
-      algorithm: 'RS256'
-    });
-
-    return token;
-  }
-}
 
 describe('Token Manager', () => {
   const mockedJwt = jwt as jest.Mocked<typeof jwt>;
