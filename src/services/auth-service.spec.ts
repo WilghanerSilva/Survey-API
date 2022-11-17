@@ -45,7 +45,7 @@ const makeEncrypter = () => {
     public hashedPassword = "";
     public isValid = true;
 
-    compare(password: string, hashedPassword: string){
+    async compare(password: string, hashedPassword: string){
       
       this.password = password;
       this.hashedPassword = hashedPassword;
