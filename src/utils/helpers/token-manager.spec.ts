@@ -28,7 +28,7 @@ describe('Token Manager', () => {
       expect(()=>{sut.generate('')}).toThrow(new MissingParamError('userId'));
   })
 
-  test('should call jwt with correct params', () => {
+  test('should call JWT with correct params', () => {
     const sut = new TokenManager();
     const id = 'any_userid';
     let calledUserid;
@@ -40,5 +40,21 @@ describe('Token Manager', () => {
     sut.generate(id);
 
     expect(calledUserid).toBe(id);
+  })
+
+  test('should return null if JWT returns null', () => {
+    const sut = new TokenManager();
+    mockedJwt.sign.mockImplementation(()=>{return null});
+    const token = sut.generate('any_id');
+
+    expect(token).toBeNull();
+  })
+
+  test('should return token if JWT returs token', () => {
+    const sut = new TokenManager();
+    mockedJwt.sign.mockImplementation(()=>{return 'any_token'});
+    const token = sut.generate('any_id');
+
+    expect(token).toEqual('any_token');
   })
 })
