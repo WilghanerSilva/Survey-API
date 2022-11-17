@@ -46,4 +46,20 @@ describe('Encrypter', () => {
     expect(calledPassword).toBe(password);
     expect(calledHashedPassword).toBe(hashedPassword)
   })
+
+  test('should return return false if bcrypt returns false', async () => {
+    const sut = makeSut();
+    mockedBcrypt.compare.mockImplementation(()=>{return false});
+
+    const result = await sut.compare('invalid_password', 'hashed_password');
+    expect(result).toEqual(false);
+  })
+
+  test('should return true if bcrypt returns true', async () => {
+    const sut = makeSut();
+    mockedBcrypt.compare.mockImplementation(()=>{return true});
+
+    const result = await sut.compare('valid_password', 'hashed_password');
+    expect(result).toBe(true);
+  })
 })
