@@ -1,4 +1,4 @@
-import iEncrypter from "../../interfaces/encrypter";
+import iEncrypter from "../interfaces/encrypter";
 import MissingParamError from "../errors/MissingParam";
 import bcrypt from 'bcrypt';
 

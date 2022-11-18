@@ -1,6 +1,6 @@
 import HttpResponse from "../utils/HttpResponse";
-import iEmailValidator from "../interfaces/email-validator";
-import iAuthService from "../interfaces/auth-service";
+import iEmailValidator from "../utils/interfaces/email-validator";
+import iAuthService from "../utils/interfaces/auth-service";
 
 type HttpRequest = {
   body: any

@@ -1,9 +1,9 @@
 import MissingParamError from '../utils/errors/MissingParam';
 import AuthService from './auth-service';
-import iEncrypter from '../interfaces/encrypter';
-import iLoadUserByEmailRepository from '../interfaces/load-user-by-email-repository';
-import User from '../types/user-type';
-import iTokenManager from '../interfaces/token-manager';
+import iEncrypter from '../utils/interfaces/encrypter';
+import iLoadUserByEmailRepository from '../utils/interfaces/load-user-by-email-repository';
+import User from '../utils/types/user-type';
+import iTokenManager from '../utils/interfaces/token-manager';
 
 const makeLoadUserByRepository = () => {
   class LoadUserByRepositorySpy implements iLoadUserByEmailRepository{

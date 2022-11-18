@@ -1,8 +1,8 @@
-import iEncrypter from "../interfaces/encrypter";
-import iLoadUserByEmailRepository from "../interfaces/load-user-by-email-repository";
-import iAuthService from "../interfaces/auth-service";
+import iEncrypter from "../utils/interfaces/encrypter";
+import iLoadUserByEmailRepository from "../utils/interfaces/load-user-by-email-repository";
+import iAuthService from "../utils/interfaces/auth-service";
 import MissingParamError from "../utils/errors/MissingParam";
-import iTokenManager from "../interfaces/token-manager";
+import iTokenManager from "../utils/interfaces/token-manager";
 
 class AuthService implements iAuthService {
   constructor(

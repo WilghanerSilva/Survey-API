@@ -1,4 +1,4 @@
-import iTokenManager from '../../interfaces/token-manager';
+import iTokenManager from '../interfaces/token-manager';
 import MissingParamError from '../errors/MissingParam';
 import jwt from 'jsonwebtoken';
 import * as fs from 'fs';

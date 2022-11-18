@@ -1,7 +1,7 @@
 import UserController from './auth-controller';
 import MissingParamError from '../utils/errors/MissingParam';
-import iEmailValidator from '../interfaces/email-validator';
-import iAuthService from '../interfaces/auth-service';
+import iEmailValidator from '../utils/interfaces/email-validator';
+import iAuthService from '../utils/interfaces/auth-service';
 
 class EmailValidatorSpy implements iEmailValidator{
   public email = '';
