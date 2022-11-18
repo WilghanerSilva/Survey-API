@@ -1,18 +1,6 @@
-import iLoadUserByEmailRepository from '../utils/interfaces/load-user-by-email-repository';
-import User from '../utils/types/user-type';
 import MissingParamError from '../utils/errors/MissingParam';
 import { prismaMock } from '../../singleton';
-import prisma from '../../client';
-
-class LoadUserByEmailRepository implements iLoadUserByEmailRepository {
-  async load(email: string): Promise<User | undefined | null>{
-    if(!email){throw new MissingParamError('email')}
-    
-    const user = await prisma.user.findUnique({where:{email:email}});
-
-    return user;
-  }
-}
+import { LoadUserByEmailRepository } from './load-user-by-email-repository';
 
 const makeSut = () => {
   const sut = new LoadUserByEmailRepository();
