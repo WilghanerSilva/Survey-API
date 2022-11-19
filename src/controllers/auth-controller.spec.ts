@@ -42,10 +42,10 @@ describe('User Controller', () => {
         password: 'any_password'
       }
     }
-    const result = await sut.auth(httpRequest);
+    const result = await sut.route(httpRequest);
 
-    expect(result?.statusCode).toEqual(400);
-    expect(result?.body).toEqual(new MissingParamError('email'));
+    expect(result.statusCode).toEqual(400);
+    expect(result.body).toEqual(new MissingParamError('email'));
   });
 
   test('should return 400 if an empty password is sent', async () => {
@@ -55,10 +55,10 @@ describe('User Controller', () => {
         email: 'any_email@mail.com'
       }
     }
-    const result = await sut.auth(httpRequest);
+    const result = await sut.route(httpRequest);
 
-    expect(result?.statusCode).toEqual(400);
-    expect(result?.body).toEqual(new MissingParamError('password'));
+    expect(result.statusCode).toEqual(400);
+    expect(result.body).toEqual(new MissingParamError('password'));
   });
 
   test('should return 500 if an invalid EmailValidator is sent', async () => {
@@ -70,9 +70,9 @@ describe('User Controller', () => {
         password: 'any_password'
       }
     }
-    const result = await sut.auth(httpRequest);
+    const result = await sut.route(httpRequest);
 
-    expect(result?.statusCode).toEqual(500);
+    expect(result.statusCode).toEqual(500);
   });
 
   test('should correct email is sent to EmailValidator', async () => {
@@ -84,7 +84,7 @@ describe('User Controller', () => {
       }
     };
 
-    sut.auth(httpRequest);
+    sut.route(httpRequest);
 
     expect(emailValidatorSpy.email).toEqual(httpRequest.body.email);
   })
@@ -99,7 +99,7 @@ describe('User Controller', () => {
     }
 
     emailValidatorSpy.response = false;
-    const response = await sut.auth(httpRequest);
+    const response = await sut.route(httpRequest);
 
     expect(response?.statusCode).toEqual(401);
   })
@@ -113,7 +113,7 @@ describe('User Controller', () => {
         password: 'any_password'
       }
     }
-    const httpResponse = await sut.auth(httpRequest);
+    const httpResponse = await sut.route(httpRequest);
     expect(httpResponse?.statusCode).toEqual(500);
   })
 
@@ -126,7 +126,7 @@ describe('User Controller', () => {
       }
     }
     
-    await sut.auth(httpRequest);
+    await sut.route(httpRequest);
     
     expect(authServiceSpy.email).toEqual(httpRequest.body.email);
     expect(authServiceSpy.password).toEqual(httpRequest.body.password)
@@ -143,7 +143,7 @@ describe('User Controller', () => {
 
     authServiceSpy.token = '';
 
-    const httpResponse = await sut.auth(httpRequest);
+    const httpResponse = await sut.route(httpRequest);
 
     expect(httpResponse?.statusCode).toEqual(401);
   })
@@ -157,7 +157,7 @@ describe('User Controller', () => {
       }
     };
 
-    const httpResponse = await sut.auth(httpRequest);
+    const httpResponse = await sut.route(httpRequest);
 
     expect(httpResponse?.statusCode).toEqual(200);
     expect(httpResponse.body).toEqual({token: authServiceSpy.token});
@@ -179,7 +179,7 @@ describe('User Controller', () => {
       }
     }
 
-    const httpResponse = await sut.auth(httpRequest);
+    const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toEqual(500); 
     
   })

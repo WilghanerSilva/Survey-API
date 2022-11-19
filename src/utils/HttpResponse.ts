@@ -1,7 +1,8 @@
 import MissingParamError from './errors/MissingParam';
+import { HttpRes } from './types/Http-types';
 
 export default class HttpResponse{
-  static badRequest(paramName: string){
+  static badRequest(paramName: string): HttpRes{
     return {
       statusCode: 400,
       body: new MissingParamError(paramName)

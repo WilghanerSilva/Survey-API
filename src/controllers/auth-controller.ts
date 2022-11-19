@@ -1,15 +1,13 @@
 import HttpResponse from "../utils/HttpResponse";
 import iEmailValidator from "../utils/interfaces/email-validator";
 import iAuthService from "../utils/interfaces/auth-service";
+import { HttpReq } from '../utils/types/Http-types';
+import controller from "../utils/interfaces/controller";
 
-type HttpRequest = {
-  body: any
-}
-
-class UserController {
+class UserController implements controller{
   constructor(private emailValidator: iEmailValidator, private authService: iAuthService){}
 
-  async auth(httpRequest: HttpRequest) {
+  async route(httpRequest: HttpReq) {
     const {email, password} = httpRequest.body;
     if(!email){return HttpResponse.badRequest('email');}
     if(!password){return HttpResponse.badRequest('password');}
@@ -24,7 +22,7 @@ class UserController {
       const token = await this.authService.authenticate(email, password);
       if(!token){return HttpResponse.unauthorized()};
   
-      return HttpResponse.ok({token});
+      return HttpResponse.ok({token: token});
       
     } catch (error) {
       return HttpResponse.serverError();  
