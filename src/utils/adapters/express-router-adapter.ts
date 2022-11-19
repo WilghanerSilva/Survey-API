@@ -1,5 +1,5 @@
 import Controller from '../interfaces/controller';
-import { Request, Response, Router } from "express";
+import { Request, Response} from "express";
 import { HttpReq, HttpRes } from '../types/Http-types';
 
 export default class ExpressRouterAdapter {

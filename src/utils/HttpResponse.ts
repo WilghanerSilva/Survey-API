@@ -9,21 +9,21 @@ export default class HttpResponse{
     }
   }
 
-  static serverError(){
+  static serverError(): HttpRes{
     return {
       statusCode: 500,
       body: ''
     }
   }
 
-  static unauthorized(){
+  static unauthorized(): HttpRes{
     return {
       statusCode: 401,
       body: 'Email or password incorrect'
     }
   }
 
-  static ok(body: object){
+  static ok(body: object): HttpRes{
     return {
       statusCode: 200,
       body: body
