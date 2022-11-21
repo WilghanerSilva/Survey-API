@@ -12,14 +12,14 @@ export default class HttpResponse{
   static serverError(): HttpRes{
     return {
       statusCode: 500,
-      body: ''
+      body: 'An internal error has ocurred'
     }
   }
 
-  static unauthorized(): HttpRes{
+  static unauthorized(message: string): HttpRes{
     return {
       statusCode: 401,
-      body: 'Email or password incorrect'
+      body: message
     }
   }
 

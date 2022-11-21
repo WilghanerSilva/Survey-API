@@ -17,10 +17,10 @@ class UserController implements Controller{
     try {
       const isValid = this.emailValidator.validateEmail(email);
   
-      if(!isValid){return HttpResponse.unauthorized()};
+      if(!isValid){return HttpResponse.unauthorized('Email or password incorrect')};
   
       const token = await this.authService.authenticate(email, password);
-      if(!token){return HttpResponse.unauthorized()};
+      if(!token){return HttpResponse.unauthorized('Email or password incorrect')};
   
       return HttpResponse.ok({token: token});
       
