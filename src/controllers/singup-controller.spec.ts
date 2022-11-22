@@ -1,28 +1,8 @@
 import MissingParamError from '../utils/errors/MissingParam';
-import HttpResponse from '../utils/HttpResponse';
-import Controller from '../utils/interfaces/controller';
-import { HttpReq, HttpRes } from '../utils/types/Http-types';
+import SingupController from './singup-controller';
 import iEmailValidator from '../utils/interfaces/email-validator';
 import iSingupService from '../utils/interfaces/singup-service';
 
-
-class SingupController implements Controller{
-  constructor(private emailValidator: iEmailValidator, private singupService: iSingupService){}
-
-  async route(httpRequest: HttpReq): Promise<HttpRes> {
-    const {name, email, password} = httpRequest.body;
-
-    if(!email){return HttpResponse.badRequest('email')};
-    if(!name){return HttpResponse.badRequest('name')};
-    if(!password){return HttpResponse.badRequest('password')};
-    if(!this.emailValidator || !this.emailValidator.validateEmail){return HttpResponse.serverError()};
-    if(!this.singupService || !this.singupService.sing){return HttpResponse.serverError()};
-
-    if(!this.emailValidator.validateEmail(email)){return HttpResponse.unauthorized('Invalid email')};
-    if(!await this.singupService.sing(name, email, password)){return HttpResponse.unauthorized('Email in use')};    
-    return HttpResponse.badRequest('email');
-  }
-}
 
 class EmailValidatorSpy implements iEmailValidator{
   public isValid = true;
@@ -182,4 +162,18 @@ describe('Singup Controller', () => {
     expect(singupServiceSpy.password).toEqual(httpRequest.body.password);
   })
 
+  test('should return 200 if correct params are provided', async () => {
+    const {sut} = makeSut();
+
+    const httpRequest = {
+      body: {
+        name : 'any_name',
+        email : 'valid_email@email.com',
+        password : 'any_password'
+      }
+    }
+
+    const httpResponse = await sut.route(httpRequest);
+    expect(httpResponse.statusCode).toEqual(200);
+  })
 })
