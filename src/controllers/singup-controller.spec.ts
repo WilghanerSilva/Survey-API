@@ -29,6 +29,26 @@ class SingupServiceSpy implements iSingupService{
   }
 }
 
+const makeEmailValidatorWithError = () => {
+  class EmailValidatorWithError implements iEmailValidator{
+    validateEmail(email: string): boolean {
+      throw new Error();
+    }
+  }
+
+  return new EmailValidatorWithError();
+}
+
+const makeSingupServiceWithError = () => {
+  class SingupServiceWithError implements iSingupService {
+    sing(name: string, email: string, password: string): Promise<boolean> {
+      throw new Error();
+    }
+  }
+
+  return new SingupServiceWithError();
+}
+
 const makeSut =  () => {
   const emailValidatorSpy = new EmailValidatorSpy();
   const singupServiceSpy = new SingupServiceSpy();
@@ -175,5 +195,30 @@ describe('Singup Controller', () => {
 
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toEqual(200);
+  })
+
+  test('should return 500 if any dependency trhow error', async () => {
+    const singupServiceSpy = new SingupServiceSpy();
+    const emailValidatorSpy = new EmailValidatorSpy();
+    
+    const suts: SingupController[] = [
+      new SingupController(emailValidatorSpy, makeSingupServiceWithError()),
+      new SingupController(makeEmailValidatorWithError(),singupServiceSpy),
+    ];
+
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email',
+        password: 'any_password',
+      }
+    }
+
+    for(const sut of suts){
+      const httpResponse = await sut.route(httpRequest);
+
+      expect(httpResponse.statusCode).toEqual(500);
+    }
+    
   })
 })

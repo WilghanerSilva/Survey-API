@@ -16,8 +16,13 @@ export default class SingupController implements Controller{
     if(!this.emailValidator || !this.emailValidator.validateEmail){return HttpResponse.serverError()};
     if(!this.singupService || !this.singupService.sing){return HttpResponse.serverError()};
 
-    if(!this.emailValidator.validateEmail(email)){return HttpResponse.unauthorized('Invalid email')};
-    if(!await this.singupService.sing(name, email, password)){return HttpResponse.unauthorized('Email in use')};    
-    return HttpResponse.ok({message: 'account created sucessfully'});
+    try {
+      if(!this.emailValidator.validateEmail(email)){return HttpResponse.unauthorized('Invalid email')};
+      if(!await this.singupService.sing(name, email, password)){return HttpResponse.unauthorized('Email in use')};    
+      return HttpResponse.ok({message: 'account created sucessfully'});
+
+    } catch (error) {
+      return HttpResponse.serverError();
+    }
   }
 }
