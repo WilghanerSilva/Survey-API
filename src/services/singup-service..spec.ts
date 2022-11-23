@@ -26,4 +26,6 @@ describe('Signup Service', () => {
     const sut = new SingupService();
     expect(sut.sing('any_name', 'any_email@mail.com', '')).rejects.toThrow(new MissingParamError('password'));
   })
+
+  test('should throw if')
 })
