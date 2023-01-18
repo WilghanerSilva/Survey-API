@@ -1,6 +1,5 @@
 import MissingParamError from '../utils/errors/MissingParam';
 import iSingupService from '../utils/interfaces/singup-service';
-import { LoadUserByEmailRepository } from '../repositories/load-user-by-email-repository';
 import iLoadUserByEmailRepository from '../utils/interfaces/load-user-by-email-repository';
 import User from '../utils/types/user-type';
 
@@ -15,8 +14,8 @@ class SingupService implements iSingupService {
     if(!this.loadUserByEmailRepository || !this.loadUserByEmailRepository.load)
       throw new Error("Invalid LoadUserByEmailRepository");
 
-    if(!! await this.loadUserByEmailRepository.load(email))
-      throw new Error("The email is already being used");
+    if(!!this.loadUserByEmailRepository.load(email))
+      return false
     
     return true;
   }
@@ -61,7 +60,7 @@ describe('Signup Service', () => {
     expect(sut.sing('any_name', 'any_email@mail.com', 'any_password')).rejects.toThrow();
   })
 
-  test('should trhow if email has in use', async () => {
+  test('should return false if email has in use', async () => {
     const {sut, loadUserByEmailRepository} = makeSut();
 
     loadUserByEmailRepository.user = {
@@ -71,6 +70,8 @@ describe('Signup Service', () => {
       password: 'any_password'
     };
 
-    expect(sut.sing('any_name', 'any_email@mail', 'any_password')).rejects.toThrow();
+    const singResponse = await sut.sing('any_name', 'any_email@mail', 'any_password');
+
+    expect(singResponse).toBe(false);
   })
 })
