@@ -99,4 +99,10 @@ describe('Signup Service', () => {
     expect(singResponse).toBe(false);
   })
 
+  test('should return true if everything is ok', async () => {
+    const {sut} = makeSut();
+    const singResponse = sut.sing('any_name', 'any_email@mail', 'any_password');
+    expect(singResponse).toBeTruthy();
+  })
+
 })
