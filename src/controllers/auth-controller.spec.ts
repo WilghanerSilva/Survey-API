@@ -1,4 +1,4 @@
-import UserController from './auth-controller';
+import AuthController from './auth-controller';
 import MissingParamError from '../utils/errors/MissingParam';
 import iEmailValidator from '../utils/interfaces/email-validator';
 import iAuthService from '../utils/interfaces/auth-service';
@@ -28,7 +28,7 @@ class AuthServiceSpy implements iAuthService{
 const makeSut = () => {
   const emailValidatorSpy = new EmailValidatorSpy();
   const authServiceSpy = new AuthServiceSpy();
-  const sut = new UserController(emailValidatorSpy, authServiceSpy);
+  const sut = new AuthController(emailValidatorSpy, authServiceSpy);
 
   return {sut, emailValidatorSpy, authServiceSpy};
 }
@@ -63,7 +63,7 @@ describe('User Controller', () => {
 
   test('should return 500 if an invalid EmailValidator is sent', async () => {
     const authServiceSpy = new AuthServiceSpy();
-    const sut = new UserController({} as iEmailValidator, authServiceSpy);
+    const sut = new AuthController({} as iEmailValidator, authServiceSpy);
     const httpRequest = {
       body: {
         email: 'any_email@mail.com',
@@ -106,7 +106,7 @@ describe('User Controller', () => {
 
   test('should return 500 if an invalid AuthService is sent', async () => {
     const emailValidatorSpy = new EmailValidatorSpy()
-    const sut = new UserController(emailValidatorSpy, {} as iAuthService);
+    const sut = new AuthController(emailValidatorSpy, {} as iAuthService);
     const httpRequest = {
       body: {
         email: 'any_email@mail.com',
@@ -170,7 +170,7 @@ describe('User Controller', () => {
         throw new Error();
       }
     } as iAuthService;
-    const sut = new UserController(emailValidatorSpy, authServiceSpy);
+    const sut = new AuthController(emailValidatorSpy, authServiceSpy);
 
     const httpRequest = {
       body:{
