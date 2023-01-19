@@ -50,6 +50,10 @@ const makeEncrypter = () => {
       
       return this.isValid;
     }
+
+    async crypt(password: string): Promise<String> {
+      return ""
+    }
   }
 
   return new EncrypterSpy();

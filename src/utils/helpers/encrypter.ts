@@ -8,4 +8,9 @@ export default class Encrypter implements iEncrypter{
     if(!hashedPassword){throw new MissingParamError('hashedPassword')};
     return await bcrypt.compare(password, hashedPassword);
   }
+
+  async crypt(password: string): Promise<String> {
+    if(!password){throw new MissingParamError('password')};
+    return await bcrypt.hash(password, 10);
+  }
 }
