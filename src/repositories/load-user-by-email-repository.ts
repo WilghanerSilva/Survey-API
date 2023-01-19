@@ -1,6 +1,6 @@
 import prisma from '../../client';
 import User from '../utils/types/user-type';
-import iLoadUserByEmailRepository from '../utils/interfaces/load-user-by-email-repository';
+import {iLoadUserByEmailRepository} from "../utils/interfaces";
 import MissingParamError from '../utils/errors/MissingParam';
 
 export class LoadUserByEmailRepository implements iLoadUserByEmailRepository {

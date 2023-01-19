@@ -1,10 +1,8 @@
 import HttpResponse from "../utils/HttpResponse";
-import iEmailValidator from "../utils/interfaces/email-validator";
-import iAuthService from "../utils/interfaces/auth-service";
 import { HttpReq } from '../utils/types/Http-types';
-import Controller from "../utils/interfaces/controller";
+import {iEmailValidator, iAuthService, iController} from "../utils/interfaces";
 
-class UserController implements Controller{
+class UserController implements iController{
   constructor(private emailValidator: iEmailValidator, private authService: iAuthService){}
 
   async route(httpRequest: HttpReq) {

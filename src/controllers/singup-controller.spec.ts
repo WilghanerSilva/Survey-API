@@ -1,7 +1,6 @@
 import MissingParamError from '../utils/errors/MissingParam';
 import SingupController from './singup-controller';
-import iEmailValidator from '../utils/interfaces/email-validator';
-import iSingupService from '../utils/interfaces/singup-service';
+import {iEmailValidator, iSingupService} from "../utils/interfaces";
 
 
 class EmailValidatorSpy implements iEmailValidator{
