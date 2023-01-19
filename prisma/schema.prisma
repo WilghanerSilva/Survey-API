@@ -11,8 +11,52 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid())
+  id       String   @id @default(uuid())
   name     String
-  email    String @unique
+  email    String   @unique
   password String
+  surveys  Survey[]
+}
+
+model Survey {
+  id                 String              @id @default(uuid())
+  author             User                @relation(fields: [authorId], references: [id])
+  authorId           String
+  objetiveQuestions  ObjetiveQuestion[]
+  subjetiveQuestions SubjetiveQuestion[]
+}
+
+model ObjetiveQuestion {
+  id             String  @id @default(uuid())
+  survey         Survey  @relation(fields: [surveyId], references: [id])
+  surveyId       String
+  questionNumber Int
+  question       String
+  item_A         String?
+  item_A_answers Int?
+  item_B         String?
+  item_B_answers Int?
+  item_C         String?
+  item_C_answers Int?
+  item_D         String?
+  item_D_answers Int?
+  item_E         String?
+  item_E_answers Int?
+}
+
+model SubjetiveQuestion {
+  id             String                    @id @default(uuid())
+  questionNumber Int
+  question       String
+  Survey         Survey?                   @relation(fields: [surveyId], references: [id])
+  surveyId       String?
+  awnsers        SubjetiveQuestionAwnser[]
+}
+
+model SubjetiveQuestionAwnser {
+  id         String            @id @default(uuid())
+  question   SubjetiveQuestion @relation(fields: [questionId], references: [id])
+  questionId String
+  userEmail  String
+  awnser     String
 }
