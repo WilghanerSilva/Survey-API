@@ -1,10 +1,16 @@
 import MissingParamError from '../utils/errors/MissingParam';
-import { iLoadUserByEmailRepository, iSingupService, iCreateUserRepository } from "../utils/interfaces";
+import { 
+  iLoadUserByEmailRepository, 
+  iSingupService, 
+  iCreateUserRepository, 
+  iEncrypter 
+} from "../utils/interfaces";
 
 class SingupService implements iSingupService {
   constructor(
     private readonly loadUserByEmailRepository: iLoadUserByEmailRepository,
     private readonly createUserRepository: iCreateUserRepository,
+    private readonly encrypter: iEncrypter
     ){}
 
   async sing(name: string, email: string, password: string): Promise<boolean> {
@@ -17,9 +23,19 @@ class SingupService implements iSingupService {
     
     if(!this.createUserRepository || !this.createUserRepository.create)
       throw new Error("Invalid CreateUserRepository");
+    
+    if(!this.encrypter || !this.encrypter.crypt)
+      throw new Error("Invalid Encrypter");
 
     if(!!this.loadUserByEmailRepository.load(email))
       return false;
+
+    const hashedPassword = await this.encrypter.crypt(password);
+    await this.createUserRepository.create({
+      name,
+      email,
+      password: hashedPassword
+    })
     
     return true;
   }
