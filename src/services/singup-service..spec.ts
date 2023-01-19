@@ -1,10 +1,12 @@
 import MissingParamError from '../utils/errors/MissingParam';
-import iSingupService from '../utils/interfaces/singup-service';
-import iLoadUserByEmailRepository from '../utils/interfaces/load-user-by-email-repository';
+import { iLoadUserByEmailRepository, iSingupService, iCreateUserRepository } from "../utils/interfaces";
 import User from '../utils/types/user-type';
 
 class SingupService implements iSingupService {
-  constructor(private readonly loadUserByEmailRepository: iLoadUserByEmailRepository){}
+  constructor(
+    private readonly loadUserByEmailRepository: iLoadUserByEmailRepository,
+    private readonly createUserRepository: iCreateUserRepository,
+    ){}
 
   async sing(name: string, email: string, password: string): Promise<boolean> {
     if(!name){throw new MissingParamError('name')};
@@ -13,9 +15,14 @@ class SingupService implements iSingupService {
     
     if(!this.loadUserByEmailRepository || !this.loadUserByEmailRepository.load)
       throw new Error("Invalid LoadUserByEmailRepository");
+    
+    if(!this.createUserRepository || !this.createUserRepository.create)
+      throw new Error("Invalid CreateUserRepository");
 
     if(!!this.loadUserByEmailRepository.load(email))
-      return false
+      return false;
+    
+    
     
     return true;
   }
@@ -29,13 +36,20 @@ class LoadUserByEmailRepositorySpy implements iLoadUserByEmailRepository{
   }
 }
 
+class CreateUserRepositorySpy implements iCreateUserRepository {
+  async create(user: User) {
+  }
+}
+
 
 const makeSut = () =>{
   const loadUserByEmailRepository = new LoadUserByEmailRepositorySpy();
+  const createUserRepository = new CreateUserRepositorySpy();
   const sut = new SingupService(
-    loadUserByEmailRepository
+    loadUserByEmailRepository,
+    createUserRepository,
   );
-  return {sut, loadUserByEmailRepository};
+  return {sut, loadUserByEmailRepository, createUserRepository};
 }
 
 describe('Signup Service', () => {
@@ -56,7 +70,17 @@ describe('Signup Service', () => {
 
   test('should throw if invalid checkEmailRepository was sent', async () => {
     const loadUserByEmailRepository = {} as iLoadUserByEmailRepository;
-    const sut = new SingupService(loadUserByEmailRepository);
+    const {createUserRepository} = makeSut();
+    
+    const sut = new SingupService(loadUserByEmailRepository, createUserRepository);
+    expect(sut.sing('any_name', 'any_email@mail.com', 'any_password')).rejects.toThrow();
+  })
+
+  test('should throw if invalid createUserRepository was sent', async () => {
+    const {loadUserByEmailRepository} = makeSut();
+    const createUserRepository = {} as iCreateUserRepository;
+    
+    const sut = new SingupService(loadUserByEmailRepository, createUserRepository);
     expect(sut.sing('any_name', 'any_email@mail.com', 'any_password')).rejects.toThrow();
   })
 
@@ -74,4 +98,5 @@ describe('Signup Service', () => {
 
     expect(singResponse).toBe(false);
   })
+
 })
