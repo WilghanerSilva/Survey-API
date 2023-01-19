@@ -1,6 +1,6 @@
 interface iEncrypter {
   compare(password: string, hashedPassword: string): Promise<Boolean>;
-  crypt(password: string): Promise<String>;
+  crypt(password: string): Promise<string>;
 }
 
 export default iEncrypter;

@@ -51,7 +51,7 @@ const makeEncrypter = () => {
       return this.isValid;
     }
 
-    async crypt(password: string): Promise<String> {
+    async crypt(password: string): Promise<string> {
       return ""
     }
   }

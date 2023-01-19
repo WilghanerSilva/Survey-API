@@ -9,7 +9,7 @@ export default class Encrypter implements iEncrypter{
     return await bcrypt.compare(password, hashedPassword);
   }
 
-  async crypt(password: string): Promise<String> {
+  async crypt(password: string): Promise<string> {
     if(!password){throw new MissingParamError('password')};
     return await bcrypt.hash(password, 10);
   }
