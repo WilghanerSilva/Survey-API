@@ -21,8 +21,6 @@ class SingupService implements iSingupService {
     if(!!this.loadUserByEmailRepository.load(email))
       return false;
     
-    
-    
     return true;
   }
 }
