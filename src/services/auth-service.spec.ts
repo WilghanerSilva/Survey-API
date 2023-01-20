@@ -32,6 +32,10 @@ const makeTokenManagerSpy = () => {
       this.userId = userId;
       return this.token;
     }
+
+    verify(token: string): string | { userId: string; } {
+      return token;
+    }
   }
 
   return new TokenManagerSpy();
