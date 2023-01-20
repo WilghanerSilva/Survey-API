@@ -12,6 +12,8 @@ class AuthMiddleware {
     
     if(typeof verifyResult === "string")
       return {statusCode: 401, body: verifyResult};
+
+    return verifyResult.userId;
   }
 }
 
@@ -52,5 +54,13 @@ describe('AuthMiddleware', () => {
     
     expect(httpResponse.body).toBe("token expired");
     expect(httpResponse.statusCode).toBe(401);
+  })
+
+  test("should return userId if correct token has sent", () => {
+    const {sut} = makeSut();
+
+    const userId = sut.verifyToken("valid_token");
+
+    expect(typeof userId === "string").toBe(true);
   })
 })
