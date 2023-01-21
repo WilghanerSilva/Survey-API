@@ -65,7 +65,7 @@ describe('AuthMiddleware', () => {
     expect(()=>{sut.verifyToken(httpReq)}).toThrow(new Error("Invalid TokenGenerator"))
   })
 
-  test('should return 401 and invalid on body if invalid token is sent', () => {
+  test('should return 401 and invalid token on body if invalid token is sent', () => {
     const {sut} = makeSut();
 
     const httpReq = {
@@ -77,8 +77,23 @@ describe('AuthMiddleware', () => {
 
     const httpResponse = sut.verifyToken(httpReq) as HttpRes;
     
-    expect(httpResponse.body).toBe("token expired");
+    expect(httpResponse.body).toBe("Invalid token");
     expect(httpResponse.statusCode).toBe(401);
+  })
+
+  test('should return 401 and missing token on body if no token has providade', () => {
+    const {sut} = makeSut();
+
+    const httpReq = {
+      body: {},
+      headers: {
+      }
+    }
+
+    const httpResponse = sut.verifyToken(httpReq) as HttpRes;
+
+    expect(httpResponse.statusCode).toBe(401);
+    expect(httpResponse.body).toBe("Missing token");
   })
 
   test("should return userId if correct token has sent", () => {
