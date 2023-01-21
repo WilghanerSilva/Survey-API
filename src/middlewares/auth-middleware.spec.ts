@@ -11,13 +11,13 @@ class AuthMiddleware {
     if(!authorization)
       return { statusCode: 401, body: "Missing token"};
 
+    if(typeof authorization !== "string")
+      return { statusCode: 401, body: "Unauthorized"};
+
     if(!this.tokenManager || !this.tokenManager.verify)
      throw new Error("Invalid TokenGenerator");
 
     const authorizationSplit = authorization.split(" ");
-
-    if(!authorizationSplit)
-      return { statusCode: 401, body: "Unauthorized"};
 
     if(!regex.test(authorizationSplit[0]))
       return { statusCode: 401, body: "Invalid token"};
@@ -94,6 +94,22 @@ describe('AuthMiddleware', () => {
 
     expect(httpResponse.statusCode).toBe(401);
     expect(httpResponse.body).toBe("Missing token");
+  })
+
+  test('should return 401 and unauthorized if invalid authorization is sent', () => {
+    const {sut} = makeSut();
+
+    const httpReq = {
+      body: {},
+      headers: {
+        authorization: 1
+      }
+    }
+
+    const httpResponse = sut.verifyToken(httpReq) as HttpRes;
+
+    expect(httpResponse.statusCode).toBe(401);
+    expect(httpResponse.body).toBe("Unauthorized")
   })
 
   test("should return userId if correct token has sent", () => {
