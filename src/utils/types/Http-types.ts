@@ -1,5 +1,6 @@
 export type HttpReq = {
   body: any;
+  headers: any;
 }
 
 export type HttpRes = {

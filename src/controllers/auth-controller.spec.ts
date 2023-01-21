@@ -40,7 +40,8 @@ describe('User Controller', () => {
     const httpRequest = {
       body: {
         password: 'any_password'
-      }
+      },
+      headers: {}
     }
     const result = await sut.route(httpRequest);
 
@@ -53,7 +54,8 @@ describe('User Controller', () => {
     const httpRequest = {
       body: {
         email: 'any_email@mail.com'
-      }
+      },
+      headers: {}
     }
     const result = await sut.route(httpRequest);
 
@@ -68,7 +70,8 @@ describe('User Controller', () => {
       body: {
         email: 'any_email@mail.com',
         password: 'any_password'
-      }
+      },
+      headers: {}
     }
     const result = await sut.route(httpRequest);
 
@@ -81,7 +84,8 @@ describe('User Controller', () => {
       body: {
         email: 'any_email@mail.com',
         password: 'any_password'
-      }
+      },
+      headers: {}
     };
 
     sut.route(httpRequest);
@@ -95,7 +99,8 @@ describe('User Controller', () => {
       body: {
         email: 'invalid_email',
         password: 'any_password'
-      }
+      },
+      headers: {}
     }
 
     emailValidatorSpy.response = false;
@@ -111,7 +116,8 @@ describe('User Controller', () => {
       body: {
         email: 'any_email@mail.com',
         password: 'any_password'
-      }
+      },
+      headers: {}
     }
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse?.statusCode).toEqual(500);
@@ -123,7 +129,8 @@ describe('User Controller', () => {
       body: {
         email: 'any_email@mail.com',
         password: 'any_password',
-      }
+      },
+      headers: {}
     }
     
     await sut.route(httpRequest);
@@ -138,7 +145,8 @@ describe('User Controller', () => {
       body: {
         email: 'any_email@mail.com',
         password: 'invalid_password'
-      }
+      },
+      headers: {}
     }
 
     authServiceSpy.token = '';
@@ -154,7 +162,8 @@ describe('User Controller', () => {
       body: {
         email: 'any_email@mail.com',
         password: 'any_password'
-      }
+      },
+      headers: {}
     };
 
     const httpResponse = await sut.route(httpRequest);
@@ -176,7 +185,8 @@ describe('User Controller', () => {
       body:{
         email: 'any_email@mail.com',
         password: 'any_password'
-      }
+      },
+      headers: {}
     }
 
     const httpResponse = await sut.route(httpRequest);

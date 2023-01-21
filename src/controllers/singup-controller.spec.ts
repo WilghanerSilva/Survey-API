@@ -64,7 +64,8 @@ describe('Singup Controller', () => {
         name: 'any_name',
         email: '',
         password: 'any_password'
-      }
+      },
+      headers: {}
     }
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toEqual(400);
@@ -78,7 +79,8 @@ describe('Singup Controller', () => {
         name: '',
         email: 'any_email@mail.com',
         password: 'any_password'
-      }
+      },
+      headers: {}
     }
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toEqual(400);
@@ -92,7 +94,8 @@ describe('Singup Controller', () => {
         name: 'any_name',
         email: 'any_email@mail.com',
         password: ''
-      }
+      },
+      headers: {}
     }
     const httpResponse = await sut.route(httpRequest);
     expect(httpResponse.statusCode).toEqual(400);
@@ -107,7 +110,8 @@ describe('Singup Controller', () => {
         name: 'any_name',
         email: 'any_email@mail.com',
         password: 'any_password'
-      }
+      },
+      headers: {}
     }
 
     const httpResponse = await sut.route(httpRequest);
@@ -121,7 +125,8 @@ describe('Singup Controller', () => {
         name: 'any_name',
         email: 'invalid_email',
         password: 'password'
-      }
+      },
+      headers: {}
     }
     
     emailValidatorSpy.isValid = false;
@@ -140,7 +145,8 @@ describe('Singup Controller', () => {
         name: 'any_name',
         email: 'any_email@mail.com',
         password: 'any_password',
-      }
+      },
+      headers: {}
     }
 
     const httpResponse = await sut.route(httpRequest);
@@ -155,7 +161,8 @@ describe('Singup Controller', () => {
         name: 'any_name',
         email: 'used_email@mail.com',
         password: 'any_password',
-      }
+      },
+      headers: {}
     }
 
     singupServiceSpy.isCreated = false;
@@ -171,7 +178,8 @@ describe('Singup Controller', () => {
         name: 'any_name',
         email: 'any_email',
         password: 'any_password'
-      }
+      },
+      headers: {}
     }
 
     await sut.route(httpRequest);
@@ -189,7 +197,8 @@ describe('Singup Controller', () => {
         name : 'any_name',
         email : 'valid_email@email.com',
         password : 'any_password'
-      }
+      },
+      headers: {}
     }
 
     const httpResponse = await sut.route(httpRequest);
@@ -210,7 +219,8 @@ describe('Singup Controller', () => {
         name: 'any_name',
         email: 'any_email',
         password: 'any_password',
-      }
+      },
+      headers: {}
     }
 
     for(const sut of suts){
