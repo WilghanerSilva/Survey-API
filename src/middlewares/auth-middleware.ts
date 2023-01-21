@@ -23,6 +23,7 @@ export default class AuthMiddleware {
       return { statusCode: 401, body: "Invalid token"};
 
     const verifyResult = this.tokenManager.verify(authorizationSplit[1]);
+    
     if(typeof verifyResult === "string")
       return {statusCode: 401, body: verifyResult};
 
