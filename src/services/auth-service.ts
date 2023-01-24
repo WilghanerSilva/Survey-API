@@ -2,28 +2,28 @@ import MissingParamError from "../utils/errors/MissingParam";
 import {iEncrypter, iLoadUserByEmailRepository, iAuthService, iTokenManager} from "../utils/interfaces";
 
 class AuthService implements iAuthService {
-  constructor(
+	constructor(
     private loadUserByRepository: iLoadUserByEmailRepository,
     private encrypter: iEncrypter,
     private tokenManager: iTokenManager
-  ){}
+	){}
 
-  async authenticate(email: string, password: string): Promise<String | null> {
-    if(!email)
-      throw new MissingParamError('email');
+	async authenticate(email: string, password: string): Promise<string | null> {
+		if(!email)
+			throw new MissingParamError("email");
     
-    if(!password)
-      throw new MissingParamError('password')
+		if(!password)
+			throw new MissingParamError("password");
 
-    const user = await this.loadUserByRepository.load(email);
+		const user = await this.loadUserByRepository.load(email);
 
-    if(!user){return null}
-    if(!await this.encrypter.compare(password, user.password)){return null}
+		if(!user){return null;}
+		if(!await this.encrypter.compare(password, user.password)){return null;}
     
-    const acessToken = this.tokenManager.generate(user.id);
+		const acessToken = this.tokenManager.generate(user.id);
 
-    return acessToken;
-  }
+		return acessToken;
+	}
 }
 
 export default AuthService;
