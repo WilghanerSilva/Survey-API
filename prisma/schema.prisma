@@ -33,30 +33,16 @@ model ObjetiveQuestion {
   questionNumber Int
   question       String
   item_A         String?
-  item_A_answers Int?
   item_B         String?
-  item_B_answers Int?
   item_C         String?
-  item_C_answers Int?
   item_D         String?
-  item_D_answers Int?
   item_E         String?
-  item_E_answers Int?
 }
 
 model SubjetiveQuestion {
-  id             String                    @id @default(uuid())
+  id             String  @id @default(uuid())
   questionNumber Int
   question       String
-  Survey         Survey?                   @relation(fields: [surveyId], references: [id])
+  Survey         Survey? @relation(fields: [surveyId], references: [id])
   surveyId       String?
-  awnsers        SubjetiveQuestionAwnser[]
-}
-
-model SubjetiveQuestionAwnser {
-  id         String            @id @default(uuid())
-  question   SubjetiveQuestion @relation(fields: [questionId], references: [id])
-  questionId String
-  userEmail  String
-  awnser     String
 }
