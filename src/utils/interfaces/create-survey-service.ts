@@ -12,8 +12,8 @@ type AdaptedSubjetiveQuestion = Omit<
 
 interface iCreateSurveyService {
   create(
-    SubjetiveQuestion: AdaptedObjetiveQuestion[], 
-    ObjetiveQuestions: AdaptedSubjetiveQuestion[], 
+    SubjetiveQuestion: AdaptedSubjetiveQuestion[], 
+    ObjetiveQuestions: AdaptedObjetiveQuestion[], 
     userId: string
   ) : Promise<Survey>;
 }
