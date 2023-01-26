@@ -6,6 +6,7 @@ import iTokenManager from "./token-manager";
 import iEncrypter from "./encrypter";
 import iCreateUserRepository from "./create-user-repository";
 import iController from "./controller";
+import iCreateSurveyService from "./create-survey-service";
 
 export {
 	iEmailValidator,
@@ -15,5 +16,6 @@ export {
 	iTokenManager,
 	iEncrypter,
 	iCreateUserRepository,
-	iController
+	iController,
+	iCreateSurveyService
 };
