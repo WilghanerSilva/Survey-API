@@ -4,7 +4,6 @@ import HttpResponse from "../utils/HttpResponse";
 import MissingParamError from "../utils/errors/MissingParam";
 import { ObjetiveQuestion, SubjetiveQuestion, Survey } from "@prisma/client";
 import iCreateSurveyService from "../utils/interfaces/create-survey-service";
-import { iCreateUserRepository }from "../utils/interfaces";
 import InvalidDependencyError from "../utils/errors/InvalidDependency";
 
 type AdaptedObjetiveQuestion = Omit<
@@ -35,9 +34,20 @@ class CreateSurveyController implements iController{
 		if(!userId)
 			return HttpResponse.serverError();
 
-		if(!this.createSurveyService || !this.createSurveyService.create)
+		if(!this.createSurveyService || !this.createSurveyService.create){
+			console.error(new InvalidDependencyError("CreateSurveyService"));
+      
 			return HttpResponse.serverError();
+		}
     
+		try {
+			this.createSurveyService.create(subjetiveQuestions, objetiveQuestions, userId);
+		
+		} catch (error) {
+
+			console.error(error);
+			return HttpResponse.serverError();
+		}
 
 		return HttpResponse.ok({});
 	}
@@ -78,6 +88,7 @@ const makeCreateSurveyService = () => {
 	class CreateSurveyServiceSpy implements iCreateSurveyService{
 		public subjetiveQuestions: AdaptedSubjetiveQuestion[] = [];
 		public objetiveQuestions: AdaptedObjetiveQuestion[] = [];
+		public userId = "";
 		public survey: Survey = {} as Survey;
     
 		async create(
@@ -87,6 +98,7 @@ const makeCreateSurveyService = () => {
 		): Promise<Survey> {
 			this.subjetiveQuestions = subjetiveQuestions;
 			this.objetiveQuestions = objetiveQuestions;
+			this.userId = userId;
 
 			return this.survey;
 		}
@@ -99,7 +111,7 @@ const makeSut = () => {
 	const createSurveyService = makeCreateSurveyService(); 
 	const sut = new CreateSurveyController(createSurveyService);
   
-	return { sut };
+	return { sut, createSurveyService };
 };
 
 describe("CreateSurveyController", () => {
@@ -141,11 +153,12 @@ describe("CreateSurveyController", () => {
 		expect(httpResponse.body).toEqual("An internal error has ocurred");
 	});
 
+  
 	test("should return 500 if invalid CreateSurveyService is provided", async () => {
 		const invalidCreateSurveyService = {} as iCreateSurveyService;
-
+    
 		const sut = new CreateSurveyController(invalidCreateSurveyService);
-
+    
 		const httpRequest = {
 			body: {
 				objetiveQuestions: objetiveQuestionFactory(5),
@@ -161,4 +174,28 @@ describe("CreateSurveyController", () => {
 		expect(httpResponse.statusCode).toBe(500);
 		expect(httpResponse.body).toBe("An internal error has ocurred");
 	});
+
+	test("should correct questions is send to CreateSurveyService", async () => {
+		const { sut, createSurveyService} = makeSut();
+
+		const objetiveQuestions = objetiveQuestionFactory(2);
+		const subjetiveQuestions = subjetiveQuestionFactory(2);
+
+		const httpRequest = {
+			body: {
+				objetiveQuestions,
+				subjetiveQuestions,
+				userId: "any_id"
+			},
+			headers: {
+			}
+		};
+
+		await sut.route(httpRequest);
+
+		expect(createSurveyService.objetiveQuestions).toEqual(objetiveQuestions);
+		expect(createSurveyService.subjetiveQuestions).toEqual(subjetiveQuestions);
+		expect(createSurveyService.userId).toEqual("any_id");
+	});
+  
 });
