@@ -1,5 +1,7 @@
 import {iTokenManager} from "../utils/interfaces";
 import { HttpReq } from "../utils/types/Http-types";
+import HttpResponse from "../utils/HttpResponse";
+import InvalidDependencyError from "../utils/errors/InvalidDependency";
 
 export default class AuthMiddleware {
 	constructor (private readonly tokenManager: iTokenManager){}
@@ -9,23 +11,25 @@ export default class AuthMiddleware {
 		const regex = new RegExp("Bearer");
 
 		if(!authorization)
-			return { statusCode: 401, body: "Missing token"};
+			return HttpResponse.unauthorized("Missing token");
 
 		if(typeof authorization !== "string")
-			return { statusCode: 401, body: "Unauthorized"};
+			return HttpResponse.unauthorized("Unauthorized");
 
-		if(!this.tokenManager || !this.tokenManager.verify)
-			throw new Error("Invalid TokenGenerator");
+		if(!this.tokenManager || !this.tokenManager.verify){
+			console.error(new InvalidDependencyError("Invalid TokenManager"));
+			return HttpResponse.serverError();
+		}
 
 		const authorizationSplit = authorization.split(" ");
 
 		if(!regex.test(authorizationSplit[0]))
-			return { statusCode: 401, body: "Invalid token"};
+			return HttpResponse.unauthorized("Invalid token");
 
 		const verifyResult = this.tokenManager.verify(authorizationSplit[1]);
     
 		if(typeof verifyResult === "string")
-			return {statusCode: 401, body: verifyResult};
+			return HttpResponse.unauthorized(verifyResult);
 
 		return verifyResult.userId;
 	}
