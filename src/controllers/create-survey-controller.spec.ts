@@ -198,4 +198,28 @@ describe("CreateSurveyController", () => {
 		expect(createSurveyService.userId).toEqual("any_id");
 	});
   
+	test("should return server error if any dependency throw error", async () => {
+		const createSurveyService = {
+			create: () => {
+				throw new Error();
+			}
+		} as iCreateSurveyService;
+
+		const sut = new CreateSurveyController(createSurveyService);
+    
+		const httpRequest = {
+			body: {
+				objetiveQuestions: objetiveQuestionFactory(5),
+				subjetiveQuestions: subjetiveQuestionFactory(5),
+				userId: "any_id"
+			},
+			headers: {
+			}
+		};
+
+		const httpResponse = await sut.route(httpRequest);
+
+		expect(httpResponse.statusCode).toEqual(500);
+    
+	});
 });
