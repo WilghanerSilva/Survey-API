@@ -9,6 +9,7 @@
   "scripts": {
     "dev:server": "ts-node-dev --respawn --transpile-only ./src/index.ts",
     "test:watch": "jest --watch --colors --noStackTrace",
+    "test:watchAll": "jest --watchAll --colors --noStackTrace",
     "test": "jest"
   },
   "devDependencies": {
