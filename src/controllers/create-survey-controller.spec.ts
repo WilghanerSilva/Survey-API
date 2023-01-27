@@ -1,7 +1,6 @@
 import iController from "../utils/interfaces/controller";
 import { HttpReq, HttpRes } from "../utils/types/Http-types";
 import HttpResponse from "../utils/HttpResponse";
-import MissingParamError from "../utils/errors/MissingParam";
 import { ObjetiveQuestion, SubjetiveQuestion, Survey } from "@prisma/client";
 import iCreateSurveyService from "../utils/interfaces/create-survey-service";
 import InvalidDependencyError from "../utils/errors/InvalidDependency";
@@ -135,7 +134,7 @@ describe("CreateSurveyController", () => {
 		const httpResponse = await sut.route(httpRequest);
   
 		expect(httpResponse.statusCode).toEqual(400);
-		expect(httpResponse.body).toEqual(new MissingParamError("Questions"));
+		expect(httpResponse.body.message).toEqual("Missing param: Questions");
 	});
 
 	test("should return 500 if no userId is provided", async () => {
@@ -154,7 +153,7 @@ describe("CreateSurveyController", () => {
 		const httpResponse = await sut.route(httpRequest);
 
 		expect(httpResponse.statusCode).toEqual(500);
-		expect(httpResponse.body).toEqual("An internal error has ocurred");
+		expect(httpResponse.body.message).toEqual("An internal error has ocurred");
 	});
   
 	test("should return 500 if invalid CreateSurveyService is provided", async () => {
@@ -175,7 +174,7 @@ describe("CreateSurveyController", () => {
 		const httpResponse = await sut.route(httpRequest);
 
 		expect(httpResponse.statusCode).toBe(500);
-		expect(httpResponse.body).toBe("An internal error has ocurred");
+		expect(httpResponse.body.message).toBe("An internal error has ocurred");
 	});
 
 	test("should correct questions is send to CreateSurveyService", async () => {
