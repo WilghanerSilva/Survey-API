@@ -41,15 +41,19 @@ class CreateSurveyController implements iController{
 		}
     
 		try {
-			this.createSurveyService.create(subjetiveQuestions, objetiveQuestions, userId);
+			const survey  = await this.createSurveyService.create(
+				subjetiveQuestions, 
+				objetiveQuestions, 
+				userId
+			);
+
+			return HttpResponse.ok(survey);
 		
 		} catch (error) {
 
 			console.error(error);
 			return HttpResponse.serverError();
 		}
-
-		return HttpResponse.ok({});
 	}
 }
 
@@ -152,7 +156,6 @@ describe("CreateSurveyController", () => {
 		expect(httpResponse.statusCode).toEqual(500);
 		expect(httpResponse.body).toEqual("An internal error has ocurred");
 	});
-
   
 	test("should return 500 if invalid CreateSurveyService is provided", async () => {
 		const invalidCreateSurveyService = {} as iCreateSurveyService;
@@ -221,5 +224,31 @@ describe("CreateSurveyController", () => {
 
 		expect(httpResponse.statusCode).toEqual(500);
     
+	});
+
+	test("should return 200 and the survey object on body if everything is ok", async () => {
+		const { sut, createSurveyService } = makeSut();
+
+		const survey: Survey = {
+			id: "survey_id",
+			authorId: "user_id"
+		};
+
+		createSurveyService.survey = survey;
+
+		const httpRequest = {
+			body: {
+				objetiveQuestions: objetiveQuestionFactory(5),
+				subjetiveQuestions: subjetiveQuestionFactory(5),
+				userId: "any_id"
+			},
+			headers: {
+			}
+		};
+
+		const httpResponse = await sut.route(httpRequest);
+		
+		expect(httpResponse.statusCode).toEqual(200);
+		expect(httpResponse.body.data).toEqual(survey);
 	});
 });
