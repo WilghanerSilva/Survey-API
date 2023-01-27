@@ -19,7 +19,7 @@ export default class SingupController implements Controller{
 		try {
 			if(!this.emailValidator.validateEmail(email)){return HttpResponse.unauthorized("Invalid email");};
 			if(!await this.singupService.sing(name, email, password)){return HttpResponse.unauthorized("Email in use");};    
-			return HttpResponse.ok({message: "account created sucessfully"});
+			return HttpResponse.ok({});
 
 		} catch (error) {
 			return HttpResponse.serverError();

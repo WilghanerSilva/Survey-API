@@ -53,7 +53,7 @@ describe("AuthMiddleware", () => {
 
 		const httpResponse = sut.verifyToken(httpReq) as HttpRes;
     
-		expect(httpResponse.body).toBe("Invalid token");
+		expect(httpResponse.body.message).toBe("Invalid token");
 		expect(httpResponse.statusCode).toBe(401);
 	});
 
@@ -69,7 +69,7 @@ describe("AuthMiddleware", () => {
 		const httpResponse = sut.verifyToken(httpReq) as HttpRes;
 
 		expect(httpResponse.statusCode).toBe(401);
-		expect(httpResponse.body).toBe("Missing token");
+		expect(httpResponse.body.message).toBe("Missing token");
 	});
 
 	test("should return 401 and unauthorized if invalid authorization has sent", () => {
@@ -85,7 +85,7 @@ describe("AuthMiddleware", () => {
 		const httpResponse = sut.verifyToken(httpReq) as HttpRes;
 
 		expect(httpResponse.statusCode).toBe(401);
-		expect(httpResponse.body).toBe("Unauthorized");
+		expect(httpResponse.body.message).toBe("Unauthorized");
 	});
 
 	test("should return 401 and expired token if invalid token has sent", () => {
@@ -103,7 +103,7 @@ describe("AuthMiddleware", () => {
 		const httpResponse = sut.verifyToken(httpReq) as HttpRes;
 
 		expect(httpResponse.statusCode).toBe(401);
-		expect(httpResponse.body).toBe("Expired token");
+		expect(httpResponse.body.message).toBe("Expired token");
 	});
 
 	test("should return userId if correct token has sent", () => {

@@ -1,5 +1,4 @@
 import AuthController from "./auth-controller";
-import MissingParamError from "../utils/errors/MissingParam";
 import iEmailValidator from "../utils/interfaces/email-validator";
 import iAuthService from "../utils/interfaces/auth-service";
 
@@ -34,7 +33,7 @@ const makeSut = () => {
 };
 
 
-describe("User Controller", () => {
+describe("AuthController", () => {
 	test("should return 400 if an empty email is sent", async () => {
 		const {sut} = makeSut();
 		const httpRequest = {
@@ -46,7 +45,7 @@ describe("User Controller", () => {
 		const result = await sut.route(httpRequest);
 
 		expect(result.statusCode).toEqual(400);
-		expect(result.body).toEqual(new MissingParamError("email"));
+		expect(result.body.message).toEqual("Missing param: email");
 	});
 
 	test("should return 400 if an empty password is sent", async () => {
@@ -60,7 +59,7 @@ describe("User Controller", () => {
 		const result = await sut.route(httpRequest);
 
 		expect(result.statusCode).toEqual(400);
-		expect(result.body).toEqual(new MissingParamError("password"));
+		expect(result.body.message).toEqual("Missing param: password");
 	});
 
 	test("should return 500 if an invalid EmailValidator is sent", async () => {
@@ -106,7 +105,7 @@ describe("User Controller", () => {
 		emailValidatorSpy.response = false;
 		const response = await sut.route(httpRequest);
 
-		expect(response?.statusCode).toEqual(401);
+		expect(response.statusCode).toEqual(401);
 	});
 
 	test("should return 500 if an invalid AuthService is sent", async () => {
@@ -120,7 +119,7 @@ describe("User Controller", () => {
 			headers: {}
 		};
 		const httpResponse = await sut.route(httpRequest);
-		expect(httpResponse?.statusCode).toEqual(500);
+		expect(httpResponse.statusCode).toEqual(500);
 	});
 
 	test("should send correct email and password to AuthService", async () => {
@@ -153,7 +152,7 @@ describe("User Controller", () => {
 
 		const httpResponse = await sut.route(httpRequest);
 
-		expect(httpResponse?.statusCode).toEqual(401);
+		expect(httpResponse.statusCode).toEqual(401);
 	});
 
 	test("shoul return 200 and token if an invalid AuthService is sent", async () => {
@@ -168,8 +167,8 @@ describe("User Controller", () => {
 
 		const httpResponse = await sut.route(httpRequest);
 
-		expect(httpResponse?.statusCode).toEqual(200);
-		expect(httpResponse.body).toEqual({token: authServiceSpy.token});
+		expect(httpResponse.statusCode).toEqual(200);
+		expect(httpResponse.body.data).toEqual({token: authServiceSpy.token});
 	});
 
 	test("should return 500 if any dependency throw an error", async () => {

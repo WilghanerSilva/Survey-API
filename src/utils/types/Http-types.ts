@@ -4,6 +4,9 @@ export type HttpReq = {
 }
 
 export type HttpRes = {
-  body: any;
+  body: {
+    message: string,
+    data? : any
+  };
   statusCode: number;
 }

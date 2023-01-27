@@ -1,4 +1,3 @@
-import MissingParamError from "../utils/errors/MissingParam";
 import SingupController from "./singup-controller";
 import {iEmailValidator, iSingupService} from "../utils/interfaces";
 
@@ -30,7 +29,7 @@ class SingupServiceSpy implements iSingupService{
 
 const makeEmailValidatorWithError = () => {
 	class EmailValidatorWithError implements iEmailValidator{
-		validateEmail(email: string): boolean {
+		validateEmail(): boolean {
 			throw new Error();
 		}
 	}
@@ -40,7 +39,7 @@ const makeEmailValidatorWithError = () => {
 
 const makeSingupServiceWithError = () => {
 	class SingupServiceWithError implements iSingupService {
-		sing(name: string, email: string, password: string): Promise<boolean> {
+		sing(): Promise<boolean> {
 			throw new Error();
 		}
 	}
@@ -69,7 +68,7 @@ describe("Singup Controller", () => {
 		};
 		const httpResponse = await sut.route(httpRequest);
 		expect(httpResponse.statusCode).toEqual(400);
-		expect(httpResponse.body).toEqual(new MissingParamError("email"));
+		expect(httpResponse.body.message).toEqual("Missing param: email");
 	});
 
 	test("should return 400 if no name is provided", async () => {
@@ -84,7 +83,7 @@ describe("Singup Controller", () => {
 		};
 		const httpResponse = await sut.route(httpRequest);
 		expect(httpResponse.statusCode).toEqual(400);
-		expect(httpResponse.body).toEqual(new MissingParamError("name"));
+		expect(httpResponse.body.message).toEqual("Missing param: name");
 	});
 
 	test("should return 400 if no password is provided", async () => {
@@ -99,7 +98,7 @@ describe("Singup Controller", () => {
 		};
 		const httpResponse = await sut.route(httpRequest);
 		expect(httpResponse.statusCode).toEqual(400);
-		expect(httpResponse.body).toEqual(new MissingParamError("password"));
+		expect(httpResponse.body.message).toEqual("Missing param: password");
 	});
 
 	test("should return 500 if an invalid EmailValidator is provided", async () => {
@@ -133,7 +132,7 @@ describe("Singup Controller", () => {
 		const httpResponse = await sut.route(httpRequest);
 
 		expect(httpResponse.statusCode).toEqual(401);
-		expect(httpResponse.body).toEqual("Invalid email");
+		expect(httpResponse.body.message).toEqual("Invalid email");
 	});
 
 	test("should return 500 if an invalid singupService is provided", async () => {
