@@ -7,6 +7,7 @@ import iEncrypter from "./encrypter";
 import iCreateUserRepository from "./create-user-repository";
 import iController from "./controller";
 import iCreateSurveyService from "./create-survey-service";
+import iCreateSurveyRepository from "./create-survey-repository";
 
 export {
 	iEmailValidator,
@@ -17,5 +18,6 @@ export {
 	iEncrypter,
 	iCreateUserRepository,
 	iController,
-	iCreateSurveyService
+	iCreateSurveyService,
+	iCreateSurveyRepository
 };

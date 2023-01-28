@@ -2,21 +2,11 @@ import iController from "../utils/interfaces/controller";
 import { HttpReq, HttpRes } from "../utils/types/Http-types";
 import HttpResponse from "../utils/HttpResponse";
 import InvalidDependencyError from "../utils/errors/InvalidDependency";
-import { ObjetiveQuestion, SubjetiveQuestion} from "@prisma/client";
 import iCreateSurveyService from "../utils/interfaces/create-survey-service";
-
-type AdaptedObjetiveQuestion = Omit<
-    ObjetiveQuestion, 
-    "id" | "survey" | "surveyId"
->
-
-type AdaptedSubjetiveQuestion = Omit<
-    SubjetiveQuestion, 
-    "id" | "survey" | "surveyId"
->
+import { AdaptedClosedQuestion, AdaptedSubjetiveQuestion } from "../utils/types/questions-types";
 
 type SurveyRequestBody  = {
-  objetiveQuestions: AdaptedObjetiveQuestion[],
+  closedQuestions: AdaptedClosedQuestion[],
   subjetiveQuestions: AdaptedSubjetiveQuestion[],
   userId: string
 }
@@ -26,9 +16,9 @@ class CreateSurveyController implements iController{
 	constructor(private readonly createSurveyService: iCreateSurveyService){}
 
 	async route(httpRequest: HttpReq): Promise<HttpRes> {
-		const {objetiveQuestions, subjetiveQuestions, userId}: SurveyRequestBody = httpRequest.body;
+		const {ClosedQuestions, subjetiveQuestions, userId}: SurveyRequestBody = httpRequest.body;
 
-		if(objetiveQuestions.length === 0 && subjetiveQuestions.length === 0)
+		if(ClosedQuestions.length === 0 && subjetiveQuestions.length === 0)
 			return HttpResponse.badRequest("Questions");
 
 		if(!userId)
@@ -43,7 +33,7 @@ class CreateSurveyController implements iController{
 		try {
 			const survey  = await this.createSurveyService.create(
 				subjetiveQuestions, 
-				objetiveQuestions, 
+				ClosedQuestions, 
 				userId
 			);
 

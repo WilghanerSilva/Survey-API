@@ -1,19 +1,10 @@
-import { ObjetiveQuestion, SubjetiveQuestion, Survey } from "@prisma/client";
+import { ClosedQuestion, OpenQuestion, Survey } from "@prisma/client";
 import iCreateSurveyService from "../utils/interfaces/create-survey-service";
-import CreateSurveyController from "./create-survey-service";
+import CreateSurveyController from "./create-survey-controller";
+import { AdaptedOpenQuestion, AdaptedClosedQuestion } from "../utils/types/questions-types";
 
-type AdaptedObjetiveQuestion = Omit<
-    ObjetiveQuestion, 
-    "id" | "survey" | "surveyId"
->
-
-type AdaptedSubjetiveQuestion = Omit<
-    SubjetiveQuestion, 
-    "id" | "survey" | "surveyId"
->
-
-const objetiveQuestionFactory = (repeat: number): AdaptedObjetiveQuestion[] => {
-	const questions: AdaptedObjetiveQuestion[] = [];
+const objetiveQuestionFactory = (repeat: number): AdaptedClosedQuestion[] => {
+	const questions: AdaptedClosedQuestion[] = [];
 
 	for (let index = 0; index < repeat; index++) {
 		questions.push({
@@ -30,8 +21,8 @@ const objetiveQuestionFactory = (repeat: number): AdaptedObjetiveQuestion[] => {
 	return questions;
 };
 
-const subjetiveQuestionFactory = (repeat: number): AdaptedSubjetiveQuestion[] => {
-	const questions: AdaptedSubjetiveQuestion[] = [];
+const subjetiveQuestionFactory = (repeat: number): AdaptedOpenQuestion[] => {
+	const questions: AdaptedOpenQuestion[] = [];
 
 	for ( let index = 0; index < repeat; index++) {
 		questions.push({
@@ -45,14 +36,14 @@ const subjetiveQuestionFactory = (repeat: number): AdaptedSubjetiveQuestion[] =>
 
 const makeCreateSurveyService = () => {
 	class CreateSurveyServiceSpy implements iCreateSurveyService{
-		public subjetiveQuestions: AdaptedSubjetiveQuestion[] = [];
-		public objetiveQuestions: AdaptedObjetiveQuestion[] = [];
+		public subjetiveQuestions: AdaptedOpenQuestion[] = [];
+		public objetiveQuestions: AdaptedClosedQuestion[] = [];
 		public userId = "";
 		public survey: Survey = {} as Survey;
     
 		async create(
-			subjetiveQuestions: AdaptedSubjetiveQuestion[],
-			objetiveQuestions: AdaptedObjetiveQuestion[],
+			subjetiveQuestions: AdaptedOpenQuestion[],
+			objetiveQuestions: AdaptedClosedQuestion[],
 			userId: string
 		): Promise<Survey> {
 			this.subjetiveQuestions = subjetiveQuestions;

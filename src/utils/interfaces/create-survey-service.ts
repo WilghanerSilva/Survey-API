@@ -1,21 +1,12 @@
-import { SubjetiveQuestion, ObjetiveQuestion, Survey } from "@prisma/client";
-
-type AdaptedObjetiveQuestion = Omit<
-    ObjetiveQuestion, 
-    "id" | "survey" | "surveyId"
->
-
-type AdaptedSubjetiveQuestion = Omit<
-    SubjetiveQuestion, 
-    "id" | "survey" | "surveyId"
->
+import { Survey } from "@prisma/client";
+import { AdaptedClosedQuestion, AdaptedOpenQuestion } from "../types/questions-types";
 
 interface iCreateSurveyService {
   create(
-    SubjetiveQuestion: AdaptedSubjetiveQuestion[], 
-    ObjetiveQuestions: AdaptedObjetiveQuestion[], 
+    OpenQuestion: AdaptedOpenQuestion[], 
+    ClosedQuestions: AdaptedClosedQuestion[], 
     userId: string
-  ) : Promise<Survey>;
+  ) : Promise<any>;
 }
 
 export default iCreateSurveyService;
