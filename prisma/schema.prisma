@@ -19,11 +19,11 @@ model User {
 }
 
 model Survey {
-  id                 String           @id @default(uuid())
-  author             User             @relation(fields: [authorId], references: [id])
-  authorId           String
-  objetiveQuestions  ClosedQuestion[]
-  subjetiveQuestions OpenQuestion[]
+  id              String           @id @default(uuid())
+  author          User             @relation(fields: [authorId], references: [id])
+  authorId        String
+  closedQuestions ClosedQuestion[]
+  openQuestions   OpenQuestion[]
 }
 
 model ClosedQuestion {

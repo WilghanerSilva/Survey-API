@@ -1,9 +1,9 @@
-import { ClosedQuestion, OpenQuestion, Survey } from "@prisma/client";
+import { Survey } from "@prisma/client";
 import iCreateSurveyService from "../utils/interfaces/create-survey-service";
 import CreateSurveyController from "./create-survey-controller";
 import { AdaptedOpenQuestion, AdaptedClosedQuestion } from "../utils/types/questions-types";
 
-const objetiveQuestionFactory = (repeat: number): AdaptedClosedQuestion[] => {
+const closedQuestionFactory = (repeat: number): AdaptedClosedQuestion[] => {
 	const questions: AdaptedClosedQuestion[] = [];
 
 	for (let index = 0; index < repeat; index++) {
@@ -21,7 +21,7 @@ const objetiveQuestionFactory = (repeat: number): AdaptedClosedQuestion[] => {
 	return questions;
 };
 
-const subjetiveQuestionFactory = (repeat: number): AdaptedOpenQuestion[] => {
+const openQuestionFactory = (repeat: number): AdaptedOpenQuestion[] => {
 	const questions: AdaptedOpenQuestion[] = [];
 
 	for ( let index = 0; index < repeat; index++) {
@@ -36,18 +36,18 @@ const subjetiveQuestionFactory = (repeat: number): AdaptedOpenQuestion[] => {
 
 const makeCreateSurveyService = () => {
 	class CreateSurveyServiceSpy implements iCreateSurveyService{
-		public subjetiveQuestions: AdaptedOpenQuestion[] = [];
-		public objetiveQuestions: AdaptedClosedQuestion[] = [];
+		public openQuestions: AdaptedOpenQuestion[] = [];
+		public closedQuestions: AdaptedClosedQuestion[] = [];
 		public userId = "";
 		public survey: Survey = {} as Survey;
     
 		async create(
-			subjetiveQuestions: AdaptedOpenQuestion[],
-			objetiveQuestions: AdaptedClosedQuestion[],
+			openQuestions: AdaptedOpenQuestion[],
+			closedQuestions: AdaptedClosedQuestion[],
 			userId: string
 		): Promise<Survey> {
-			this.subjetiveQuestions = subjetiveQuestions;
-			this.objetiveQuestions = objetiveQuestions;
+			this.openQuestions = openQuestions;
+			this.closedQuestions = closedQuestions;
 			this.userId = userId;
 
 			return this.survey;
@@ -70,8 +70,8 @@ describe("CreateSurveyController", () => {
 
 		const httpRequest = {
 			body: {
-				objetiveQuestions: [],
-				subjetiveQuestions: [],
+				closedQuestions: [],
+				openQuestions: [],
 				userId: "any_id"
 			},
 			headers: {
@@ -89,8 +89,8 @@ describe("CreateSurveyController", () => {
     
 		const httpRequest = {
 			body: {
-				objetiveQuestions: objetiveQuestionFactory(5),
-				subjetiveQuestions: subjetiveQuestionFactory(5),
+				closedQuestions: closedQuestionFactory(5),
+				openQuestions: openQuestionFactory(5),
 				userId: ""
 			},
 			headers: {
@@ -110,8 +110,8 @@ describe("CreateSurveyController", () => {
     
 		const httpRequest = {
 			body: {
-				objetiveQuestions: objetiveQuestionFactory(5),
-				subjetiveQuestions: subjetiveQuestionFactory(5),
+				closedQuestions: closedQuestionFactory(5),
+				openQuestions: openQuestionFactory(5),
 				userId: "any_id"
 			},
 			headers: {
@@ -127,13 +127,13 @@ describe("CreateSurveyController", () => {
 	test("should correct questions is send to CreateSurveyService", async () => {
 		const { sut, createSurveyService} = makeSut();
 
-		const objetiveQuestions = objetiveQuestionFactory(2);
-		const subjetiveQuestions = subjetiveQuestionFactory(2);
+		const closedQuestions = closedQuestionFactory(2);
+		const openQuestions = openQuestionFactory(2);
 
 		const httpRequest = {
 			body: {
-				objetiveQuestions,
-				subjetiveQuestions,
+				closedQuestions,
+				openQuestions,
 				userId: "any_id"
 			},
 			headers: {
@@ -142,8 +142,8 @@ describe("CreateSurveyController", () => {
 
 		await sut.route(httpRequest);
 
-		expect(createSurveyService.objetiveQuestions).toEqual(objetiveQuestions);
-		expect(createSurveyService.subjetiveQuestions).toEqual(subjetiveQuestions);
+		expect(createSurveyService.closedQuestions).toEqual(closedQuestions);
+		expect(createSurveyService.openQuestions).toEqual(openQuestions);
 		expect(createSurveyService.userId).toEqual("any_id");
 	});
   
@@ -158,8 +158,8 @@ describe("CreateSurveyController", () => {
     
 		const httpRequest = {
 			body: {
-				objetiveQuestions: objetiveQuestionFactory(5),
-				subjetiveQuestions: subjetiveQuestionFactory(5),
+				closedQuestions: closedQuestionFactory(5),
+				openQuestions: openQuestionFactory(5),
 				userId: "any_id"
 			},
 			headers: {
@@ -184,8 +184,8 @@ describe("CreateSurveyController", () => {
 
 		const httpRequest = {
 			body: {
-				objetiveQuestions: objetiveQuestionFactory(5),
-				subjetiveQuestions: subjetiveQuestionFactory(5),
+				closedQuestions: closedQuestionFactory(5),
+				openQuestions: openQuestionFactory(5),
 				userId: "any_id"
 			},
 			headers: {

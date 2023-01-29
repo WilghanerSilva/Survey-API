@@ -3,11 +3,11 @@ import { HttpReq, HttpRes } from "../utils/types/Http-types";
 import HttpResponse from "../utils/HttpResponse";
 import InvalidDependencyError from "../utils/errors/InvalidDependency";
 import iCreateSurveyService from "../utils/interfaces/create-survey-service";
-import { AdaptedClosedQuestion, AdaptedSubjetiveQuestion } from "../utils/types/questions-types";
+import { AdaptedClosedQuestion, AdaptedOpenQuestion } from "../utils/types/questions-types";
 
 type SurveyRequestBody  = {
   closedQuestions: AdaptedClosedQuestion[],
-  subjetiveQuestions: AdaptedSubjetiveQuestion[],
+  subjetiveQuestions: AdaptedOpenQuestion[],
   userId: string
 }
 
@@ -16,9 +16,9 @@ class CreateSurveyController implements iController{
 	constructor(private readonly createSurveyService: iCreateSurveyService){}
 
 	async route(httpRequest: HttpReq): Promise<HttpRes> {
-		const {ClosedQuestions, subjetiveQuestions, userId}: SurveyRequestBody = httpRequest.body;
+		const {closedQuestions, subjetiveQuestions, userId}: SurveyRequestBody = httpRequest.body;
 
-		if(ClosedQuestions.length === 0 && subjetiveQuestions.length === 0)
+		if(closedQuestions.length === 0 && subjetiveQuestions.length === 0)
 			return HttpResponse.badRequest("Questions");
 
 		if(!userId)

@@ -1,11 +1,11 @@
-import { ObjetiveQuestion, SubjetiveQuestion} from "@prisma/client";
+import { OpenQuestion, ClosedQuestion} from "@prisma/client";
 
 export type AdaptedClosedQuestion = Omit<
-    ObjetiveQuestion, 
+    ClosedQuestion, 
     "id" | "survey" | "surveyId"
 >
 
 export type AdaptedOpenQuestion = Omit<
-    SubjetiveQuestion, 
+    OpenQuestion, 
     "id" | "survey" | "surveyId"
 >
