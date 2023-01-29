@@ -12,6 +12,7 @@ class CreateSuveryService implements iCreateSurveyService {
 	constructor(
     private readonly createSurveyRepo: iCreateSurveyRepository,
     private readonly createOpenQuestionRepo: iCreateOpenQuestionRepository,
+    private readonly createClosedQuestionRepo: iCreateClosedQuestionRepository
 	){}
 
 	async create(
@@ -24,7 +25,10 @@ class CreateSuveryService implements iCreateSurveyService {
 			throw new InvalidDependencyError("CreateSurveyRepository");
 
 		if(!this.createOpenQuestionRepo || !this.createOpenQuestionRepo.create)
-			throw new InvalidDependencyError("CreateOpenQuestRepository");
+			throw new InvalidDependencyError("CreateOpenQuestionRepository");
+
+		if(!this.createClosedQuestionRepo || !this.createClosedQuestionRepo.create)
+			throw new InvalidDependencyError("CreateClosedQuestionRepository");
 	}
 }
 
@@ -73,7 +77,9 @@ const makeCreateSurveyRepositorySpy = () => {
 	return new CreateSurveyRepositorySpy();
 };
 
-const makeCreateOpQuestRepoSpy = () => {
+
+//CreateOpenQuestionRepository factory
+const makeCreateOQRepoSpy = () => {
 	class CreateOpenQuestionRepository  implements iCreateOpenQuestionRepository{
 		public question = {} as AdaptedOpenQuestion;
 		public surveyId = "";
@@ -87,7 +93,8 @@ const makeCreateOpQuestRepoSpy = () => {
 	return new CreateOpenQuestionRepository();
 };
 
-const makeCreateCloseQuestRepoSpy = () => {
+//CreateOpenQuestionRepository factory
+const makeCreateCQRepoSpy = () => {
 	class CreateCQRepository implements iCreateClosedQuestionRepository {
 		public question = {} as AdaptedClosedQuestion;
 		public surveyId = "";
@@ -97,30 +104,37 @@ const makeCreateCloseQuestRepoSpy = () => {
 			this.surveyId = surveyId;
 		}
 	}
+
+	return new CreateCQRepository();
 };
 
 const makeSut = () => {
 	const createSurveyRepository = makeCreateSurveyRepositorySpy();
-	const createOQRepository = makeCreateOpQuestRepoSpy();
+	const createOQRepository = makeCreateOQRepoSpy();
+	const createCQRepository = makeCreateCQRepoSpy();
 	const sut = new CreateSuveryService(
 		createSurveyRepository,
-		createOQRepository
+		createOQRepository,
+		createCQRepository,
 	);
 
 	return {
 		sut,
 		createSurveyRepository,
-		createOQRepository
+		createOQRepository,
+		createCQRepository
 	};
 };
 
 describe("Create Survey Service", () => {
-	test("Should throw an error if an invalid Create Survey Repository is provided", async () => {
+	test("Should throw an error if an invalid CreateSurveyRepository is provided", async () => {
 		const invalidCreateSurveyRepository = {} as iCreateSurveyRepository;
-		const createOQRepository = makeCreateOpQuestRepoSpy();
+		const createOQRepository = makeCreateOQRepoSpy();
+		const createCQRepository = makeCreateCQRepoSpy();
 		const sut = new CreateSuveryService(
 			invalidCreateSurveyRepository,
-			createOQRepository
+			createOQRepository,
+			createCQRepository
 		);
 		const openQuestions = openQuestionFactory(5);
 		const closedQuestions = closedQuestionFactory(5);
@@ -129,15 +143,37 @@ describe("Create Survey Service", () => {
 			.rejects.toThrow(new InvalidDependencyError("CreateSurveyRepository"));
 	});
 
-	test("Should throw an error if an invalid CreateSubQuestionRepository is provided", async () => {
+	test("Should throw an error if an invalid CreateOpenQuestionRepository is provided", async () => {
 		const createOpenQuestionRepository = {} as iCreateOpenQuestionRepository;
 		const createSurveyRepository = makeCreateSurveyRepositorySpy();
-		const sut = new CreateSuveryService(createSurveyRepository, createOpenQuestionRepository);
+		const createCQRepository = makeCreateCQRepoSpy();
+		const sut = new CreateSuveryService(
+			createSurveyRepository, 
+			createOpenQuestionRepository,
+			createCQRepository
+		);
 
 		const openQuestions = openQuestionFactory(5);
 		const closedQuestions = closedQuestionFactory(5);
 
 		expect(sut.create(openQuestions, closedQuestions, "any_id"))
-			.rejects.toThrow(new InvalidDependencyError("CreateQuestionRepository"));
+			.rejects.toThrow(new InvalidDependencyError("CreateOpenQuestionRepository"));
+	});
+
+	test("Sould throw an error if an invalid CreateClosedQuestionRepository is provided", async () => {
+		const createSurveyRepository = makeCreateSurveyRepositorySpy();
+		const createOQRepository = makeCreateOQRepoSpy();
+		const createCQRepository = {} as iCreateClosedQuestionRepository;
+		const sut = new CreateSuveryService(
+			createSurveyRepository, 
+			createOQRepository,
+			createCQRepository  
+		);
+
+		const openQuestions = openQuestionFactory(5);
+		const closedQuestions = closedQuestionFactory(5);
+    
+		expect(sut.create(openQuestions, closedQuestions, "any_id"))
+			.rejects.toThrow(new InvalidDependencyError("CreateClosedQuestionRepository"));
 	});
 });
