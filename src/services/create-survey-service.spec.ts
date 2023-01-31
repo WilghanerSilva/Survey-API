@@ -24,11 +24,13 @@ class CreateSuveryService implements iCreateSurveyService {
 		if(!this.createSurveyRepo || !this.createSurveyRepo.create)
 			throw new InvalidDependencyError("CreateSurveyRepository");
 
-		if(!this.createOpenQuestionRepo || !this.createOpenQuestionRepo.create)
+		if(!this.createOpenQuestionRepo || !this.createOpenQuestionRepo.createMany)
 			throw new InvalidDependencyError("CreateOpenQuestionRepository");
 
-		if(!this.createClosedQuestionRepo || !this.createClosedQuestionRepo.create)
+		if(!this.createClosedQuestionRepo || !this.createClosedQuestionRepo.createMany)
 			throw new InvalidDependencyError("CreateClosedQuestionRepository");
+
+		const surveyId = await this.createSurveyRepo.create(userId);
 	}
 }
 
@@ -81,11 +83,15 @@ const makeCreateSurveyRepositorySpy = () => {
 //CreateOpenQuestionRepository factory
 const makeCreateOQRepoSpy = () => {
 	class CreateOpenQuestionRepository  implements iCreateOpenQuestionRepository{
-		public question = {} as AdaptedOpenQuestion;
+		public questions: AdaptedOpenQuestion[] = [];
 		public surveyId = "";
 
-		async create(question: AdaptedOpenQuestion, surveyId: string): Promise<void> {
-			this.question = question;
+		async createOne(question: AdaptedOpenQuestion, surveyId: string): Promise<void> {
+			console.log(":)");
+		}
+
+		async createMany(questions: AdaptedOpenQuestion[], surveyId: string): Promise<void> {
+			this.questions = questions;
 			this.surveyId = surveyId;
 		}
 	}
@@ -96,11 +102,15 @@ const makeCreateOQRepoSpy = () => {
 //CreateOpenQuestionRepository factory
 const makeCreateCQRepoSpy = () => {
 	class CreateCQRepository implements iCreateClosedQuestionRepository {
-		public question = {} as AdaptedClosedQuestion;
+		public questions: AdaptedClosedQuestion[] = [];
 		public surveyId = "";
 
-		async create(question: AdaptedClosedQuestion, surveyId: string): Promise<void> {
-			this.question = question;
+		async createOne(question: AdaptedClosedQuestion, surveyId: string): Promise<void> {
+			console.log(":)");
+		}
+
+		async createMany(questions: AdaptedClosedQuestion[], surveyId: string): Promise<void> {
+			this.questions = questions;
 			this.surveyId = surveyId;
 		}
 	}
@@ -175,5 +185,27 @@ describe("Create Survey Service", () => {
     
 		expect(sut.create(openQuestions, closedQuestions, "any_id"))
 			.rejects.toThrow(new InvalidDependencyError("CreateClosedQuestionRepository"));
+	});
+
+	test("Should provide correct values for CreateSurveyReposiroty", async () => {
+		const { createSurveyRepository, sut } = makeSut();
+
+		const openQuestions = openQuestionFactory(1);
+		const closedQuestions = closedQuestionFactory(1);
+
+		await sut.create(openQuestions, closedQuestions, "any_id");
+
+		expect(createSurveyRepository.userId).toEqual("any_id");
+	});
+
+	test("Should call CreateSurveyRepsiory with correct values", async () => {
+		const { sut, createSurveyRepository} = makeSut();
+
+		const openQuestions = openQuestionFactory(8);
+		const closedQuestions = closedQuestionFactory(8);
+
+		await sut.create(openQuestions, closedQuestions, "any_id");
+
+		expect(createSurveyRepository.userId).toEqual("any_id");
 	});
 });
