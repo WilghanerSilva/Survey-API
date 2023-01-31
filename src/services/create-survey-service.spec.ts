@@ -32,7 +32,14 @@ class CreateSuveryService implements iCreateSurveyService {
 
 		const surveyId = await this.createSurveyRepo.create(userId);
 
-		this.createQuestionsRepo.create(openQuestions, closedQuestions, surveyId);
+		await this.createQuestionsRepo.create(openQuestions, closedQuestions, surveyId);
+
+		const survey = await this.loadSurveyById.load(surveyId);
+
+		if(!survey)
+			throw new Error("The survey has not created");
+
+		return survey;
 	}
 }
 
@@ -103,13 +110,15 @@ const makeCreateQuestionsRepository = () => {
 
 const makeLoadSurveyRepoSpy = () => {
 	class LoadSurveyByIdRepository implements iLoadSurveyByIdRepository{
-		public survey: Survey = {
+		public survey: Survey | null= {
 			id: "any_id",
 			authorId: "any_id"
 		};
 
+		public surveyId = "";
+
 		async load(surveyId: string): Promise<Survey | null> {
-			this.survey.id = surveyId;
+			this.surveyId = surveyId;
 			return this.survey;
 		}
 	}
@@ -193,7 +202,7 @@ describe("Create Survey Service", () => {
 		expect(createSurveyRepository.userId).toEqual("any_id");
 	});
 
-	test("Should call CreateOQRepository and CreateCQRepository with correct values", async () => {
+	test("Should call CreateQuestions with correct values", async () => {
 		const {  sut, createQuestionsRepository} = makeSut();
 
 		const openQuestions = openQuestionFactory(5);
@@ -203,6 +212,31 @@ describe("Create Survey Service", () => {
 
 		expect(createQuestionsRepository.closedQuestions).toEqual(closedQuestions);
 		expect(createQuestionsRepository.openQuestions).toEqual(openQuestions);
+	});
+
+	test("Should call LoadSurveyWithIdRepository with correct values", async () => {
+		const { sut, loadSurveyRepo, createSurveyRepository} = makeSut();
+
+		const openQuestions = openQuestionFactory(5);
+		const closedQuestions = closedQuestionFactory(5);
+
+		createSurveyRepository.surveyId = "ABCD12345";
+
+		await sut.create(openQuestions, closedQuestions, "any_id");
+
+		expect(loadSurveyRepo.surveyId).toEqual("ABCD12345");
+	});
+
+	test("Should trhow if LoadSurveyWithIdRepository returns null", async () => {
+		const { sut, loadSurveyRepo} = makeSut();
+		const openQuestions = openQuestionFactory(5);
+		const closedQuestions = closedQuestionFactory(5);
+
+		loadSurveyRepo.survey = null;
+
+		expect(sut.create(openQuestions, closedQuestions, "any_id"))
+			.rejects.toThrow(new Error("The survey has not created"));
+    
 	});
 
 });
