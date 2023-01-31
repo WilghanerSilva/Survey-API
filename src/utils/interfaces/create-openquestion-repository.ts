@@ -1,6 +1,7 @@
 import { AdaptedOpenQuestion } from "../types/questions-types";
 interface iCreateOpenQuestionRepository {
-  create(question :AdaptedOpenQuestion, surveyId: string): Promise<void>;
+  createOne( question :AdaptedOpenQuestion, surveyId: string): Promise<void>;
+  createMany( question: AdaptedOpenQuestion[], surveyId: string): Promise<void>;
 }
 
 export default iCreateOpenQuestionRepository;

@@ -1,7 +1,8 @@
 import { AdaptedClosedQuestion } from "../types/questions-types"; 
 
 interface iCreateClosedQuestionRepository {
-  create( question: AdaptedClosedQuestion, surveyId: string): Promise<void>;
+  createOne( question: AdaptedClosedQuestion, surveyId: string): Promise<void>;
+  createMany( questions: AdaptedClosedQuestion[], surveyId: string): Promise<void>;
 }
 
 export default iCreateClosedQuestionRepository;
