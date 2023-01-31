@@ -8,8 +8,8 @@ import iCreateUserRepository from "./create-user-repository";
 import iController from "./controller";
 import iCreateSurveyService from "./create-survey-service";
 import iCreateSurveyRepository from "./create-survey-repository";
-import iCreateClosedQuestionRepository from "./create-closedquestion-repository";
-import iCreateOpenQuestionRepository from "./create-openquestion-repository";
+import iCreateQuestionsRepository from "./create-questions-repository";
+import iLoadSurveyByIdRepository from "./load-survey-by-id-repository";
 
 export {
 	iEmailValidator,
@@ -22,6 +22,6 @@ export {
 	iController,
 	iCreateSurveyService,
 	iCreateSurveyRepository,
-	iCreateClosedQuestionRepository,
-	iCreateOpenQuestionRepository
+	iCreateQuestionsRepository,
+	iLoadSurveyByIdRepository
 };
