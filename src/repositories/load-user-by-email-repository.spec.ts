@@ -22,7 +22,7 @@ describe("LoadUserByEmailRepository", () => {
 		expect(user).toBeNull();
 	});
 
-	test("should return an user if user if found", async () => {
+	test("should return an user if user is found", async () => {
 		const sut = makeSut();
 		const dbUser = {
 			id:"any_id",
