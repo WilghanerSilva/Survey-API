@@ -7,7 +7,7 @@ import { AdaptedClosedQuestion, AdaptedOpenQuestion } from "../utils/types/quest
 
 type SurveyRequestBody  = {
   closedQuestions: AdaptedClosedQuestion[],
-  subjetiveQuestions: AdaptedOpenQuestion[],
+  openQuestions: AdaptedOpenQuestion[],
   userId: string
 }
 
@@ -16,9 +16,12 @@ class CreateSurveyController implements iController{
 	constructor(private readonly createSurveyService: iCreateSurveyService){}
 
 	async route(httpRequest: HttpReq): Promise<HttpRes> {
-		const {closedQuestions, subjetiveQuestions, userId}: SurveyRequestBody = httpRequest.body;
+		const {closedQuestions, openQuestions, userId}: SurveyRequestBody = httpRequest.body;
 
-		if(closedQuestions.length === 0 && subjetiveQuestions.length === 0)
+		if(!closedQuestions && !openQuestions)
+			return HttpResponse.badRequest("Questions");
+
+		if(closedQuestions.length === 0 && openQuestions.length === 0)
 			return HttpResponse.badRequest("Questions");
 
 		if(!userId)
@@ -32,8 +35,8 @@ class CreateSurveyController implements iController{
     
 		try {
 			const survey  = await this.createSurveyService.create(
-				subjetiveQuestions, 
-				ClosedQuestions, 
+				openQuestions, 
+				closedQuestions, 
 				userId
 			);
 
