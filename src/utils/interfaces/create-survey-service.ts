@@ -6,7 +6,7 @@ interface iCreateSurveyService {
     OpenQuestion: AdaptedOpenQuestion[], 
     ClosedQuestions: AdaptedClosedQuestion[], 
     userId: string
-  ) : Promise<any>;
+  ) : Promise<Survey>;
 }
 
 export default iCreateSurveyService;
