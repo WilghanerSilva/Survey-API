@@ -1,17 +1,6 @@
 import { Survey } from "@prisma/client";
 import { prismaMock } from "../../singleton";
-import prisma from "../../client";
-import {iLoadSurveyByIdRepository} from "../utils/interfaces";
-
-class LoadSurveyByIdRepository implements iLoadSurveyByIdRepository{
-	async load(surveyId: string): Promise<Survey | null> {
-		const survey = await prisma.survey.findUnique({
-			where: {id: surveyId}
-		});
-
-		return survey;
-	}
-}
+import LoadSurveyByIdRepository from "./load-survey-by-id-repository";
 
 describe("LoadSurveyById", () => {
 	test("should return null if survey is not found", async () => {
