@@ -4,8 +4,6 @@ import {
 	iCreateQuestionsRepository,
 	iCreateSurveyRepository,
 	iCreateSurveyService,
-	iLoadSurveyByIdRepository 
-
 } from "../utils/interfaces";
 import { 
 	AdaptedClosedQuestion, 
@@ -17,7 +15,6 @@ class CreateSuveryService implements iCreateSurveyService {
 	constructor(
     private readonly createSurveyRepo: iCreateSurveyRepository,
     private readonly createQuestionsRepo: iCreateQuestionsRepository,
-    private readonly loadSurveyById: iLoadSurveyByIdRepository
 	){}
 
 	async create(
@@ -31,15 +28,10 @@ class CreateSuveryService implements iCreateSurveyService {
 
 		if(!this.createQuestionsRepo || !this.createQuestionsRepo.create)
 			throw new InvalidDependencyError("CreateQuestionsRepository");
-    
-		if(!this.loadSurveyById || !this.loadSurveyById.load)
-			throw new InvalidDependencyError("LoadSurveyByIdRepository");
 
 		const surveyId = await this.createSurveyRepo.create(userId);
 
-		await this.createQuestionsRepo.create(openQuestions, closedQuestions, surveyId);
-
-		const survey = await this.loadSurveyById.load(surveyId);
+		const survey = await this.createQuestionsRepo.create(openQuestions, closedQuestions, surveyId);
 
 		if(!survey)
 			throw new Error("The survey has not created");

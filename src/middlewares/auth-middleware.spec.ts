@@ -99,7 +99,7 @@ describe("AuthMiddleware", () => {
 				authorization: "Bearer invalid_invalid token"
 			}
 		};
-
+ 
 		const httpResponse = sut.verifyToken(httpReq) as HttpRes;
 
 		expect(httpResponse.statusCode).toBe(401);
