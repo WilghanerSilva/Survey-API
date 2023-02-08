@@ -1,42 +1,11 @@
-import { iCreateQuestionsRepository } from "../utils/interfaces";
 import { prismaMock } from "../../singleton";
-import prisma from "../../client";
-import { Survey, OpenQuestion } from "@prisma/client";
+import { Survey } from "@prisma/client";
+import CreateQuestionsRepository from "./create-questions-repository";
 import { 
 	AdaptedOpenQuestion, 
 	AdaptedClosedQuestion 
 } from "../utils/types/questions-types";
 
-class CreateQuestionsRepository implements iCreateQuestionsRepository {
-	async create(
-		opQuesions: AdaptedOpenQuestion[], 
-		clQuestions: AdaptedClosedQuestion[], 
-		surveyId: string
-	): Promise<Survey> {
-		
-		const survey = await prisma.survey.update({
-			where: {id: surveyId},
-			data: {
-				objetiveQuestions: {
-					createMany: {
-						data: {
-							...clQuestions
-						}
-					}
-				},
-				subjetiveQuestions: {
-					createMany: {
-						data: {
-							...opQuesions
-						}
-					}
-				}
-			}
-		});
-
-		return survey;
-	}
-}
 
 const closedQuestionFactory = (repeat: number): AdaptedClosedQuestion[] => {
 	const questions: AdaptedClosedQuestion[] = [];

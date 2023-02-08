@@ -1,9 +1,6 @@
 import User from "../utils/types/user-type";
-import { prismaMock } from "../../singleton";
 import MissingParamError from "../utils/errors/MissingParam";
 import CreateUserRepository from "./create-user-repository";
-
-
 
 describe("CreateUserRepository", () => {
 	test("should trhow if no user is providad", async () => {

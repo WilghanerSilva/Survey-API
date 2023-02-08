@@ -1,34 +1,6 @@
-import {iCreateSurveyRepository }from "../utils/interfaces";
 import { prismaMock } from "../../singleton";
-import prisma from "../../client";
 import { Survey } from "@prisma/client";
-
-class CreateSurveyRepository implements iCreateSurveyRepository {
-	async create(userId: string): Promise<string> {
-		const user = await prisma.user.findUnique({
-			where: {
-				id: userId
-			}
-		});
-
-		if(!user)
-			throw new Error("Invalid user id");
-    
-		const survey = await prisma.survey.create({
-			data: {
-				author: {
-					connect: {
-						id: userId
-					}
-				}
-			},
-      
-      
-		});
-
-		return survey.id;
-	}
-}
+import CreateSurveyRepository from "./create-survey-repository";
 
 describe("CreateSurveyRepository", () => {
 	test("Should trhow if invalid user id is provided", async () => {
