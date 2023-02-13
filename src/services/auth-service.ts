@@ -3,7 +3,7 @@ import {iEncrypter, iLoadUserByEmailRepository, iAuthService, iTokenManager} fro
 
 class AuthService implements iAuthService {
 	constructor(
-    private loadUserByRepository: iLoadUserByEmailRepository,
+    private loadUserByEmailRepository: iLoadUserByEmailRepository,
     private encrypter: iEncrypter,
     private tokenManager: iTokenManager
 	){}
@@ -15,7 +15,7 @@ class AuthService implements iAuthService {
 		if(!password)
 			throw new MissingParamError("password");
 
-		const user = await this.loadUserByRepository.load(email);
+		const user = await this.loadUserByEmailRepository.load(email);
 
 		if(!user){return null;}
 		if(!await this.encrypter.compare(password, user.password)){return null;}

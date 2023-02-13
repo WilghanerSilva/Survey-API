@@ -23,6 +23,7 @@ class AuthController implements iController{
 			return HttpResponse.ok({token: token});
       
 		} catch (error) {
+			console.error(error);
 			return HttpResponse.serverError();  
 		}
 	}

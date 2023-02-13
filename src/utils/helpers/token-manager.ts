@@ -9,8 +9,8 @@ const privateKey = fs.readFileSync("src/keys/private.key", "utf8");
 export default class TokenManager implements iTokenManager{
 	generate(userId: string): string {
 		if(!userId){throw new MissingParamError("userId");}
-		const token = jwt.sign(userId, privateKey, {
-			expiresIn: 1800,
+		const token = jwt.sign({userId}, privateKey, {
+			expiresIn: "30m",
 			algorithm: "RS256"
 		});
 

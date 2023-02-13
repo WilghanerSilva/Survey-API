@@ -9,6 +9,7 @@ export default class SingupController implements Controller{
 
 	async route(httpRequest: HttpReq): Promise<HttpRes> {
 		const {name, email, password} = httpRequest.body;
+		console.log("Singup acessed");
 
 		if(!email){return HttpResponse.badRequest("email");};
 		if(!name){return HttpResponse.badRequest("name");};
